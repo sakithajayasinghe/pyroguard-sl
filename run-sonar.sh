@@ -28,12 +28,13 @@ if [ "$IS_UP" != "true" ]; then
 fi
 
 echo "=== Checking admin authentication & resetting default password ==="
-STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u admin:admin123 http://localhost:9000/api/system/status || true)
-if [ "$STATUS_CODE" = "200" ]; then
+VALID=$(curl -s -u admin:admin123 http://localhost:9000/api/authentication/validate | grep -o '"valid":true' || true)
+if [ -n "$VALID" ]; then
   echo "Authentication with admin123 successful."
 else
   echo "Resetting default password admin -> admin123..."
-  curl -s -u admin:admin -X POST "http://localhost:9000/api/users/change_password?login=admin&previousPassword=admin&password=admin123" || echo "Password change request completed."
+  curl -s -u admin:admin -X POST "http://localhost:9000/api/users/change_password?login=admin&previousPassword=admin&password=admin123" || true
+  echo ""
 fi
 
 echo "=== Running SonarQube Scanner ==="
