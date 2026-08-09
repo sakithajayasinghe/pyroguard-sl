@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+ultralytics
+httpx
+pandas
+numpy
+pillow
+python-multipart
+gunicorn
+python-dotenv

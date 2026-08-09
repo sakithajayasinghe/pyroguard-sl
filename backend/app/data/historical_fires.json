@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "name": "Ella Rock Forest Fire",
+    "district": "Badulla",
+    "latitude": 6.8625,
+    "longitude": 81.0431,
+    "brightness": 335.4,
+    "confidence": 92.0,
+    "acq_date": "2026-07-15",
+    "acq_time": "08:30",
+    "satellite": "VIIRS_SNPP",
+    "frp": 15.6,
+    "is_active": false
+  },
+  {
+    "id": 2,
+    "name": "Knuckles Range Wildfire",
+    "district": "Matale",
+    "latitude": 7.4284,
+    "longitude": 80.7812,
+    "brightness": 328.2,
+    "confidence": 85.0,
+    "acq_date": "2026-03-22",
+    "acq_time": "14:15",
+    "satellite": "VIIRS_NOAA20",
+    "frp": 8.4,
+    "is_active": false
+  },
+  {
+    "id": 3,
+    "name": "Monaragala Grassland Fire",
+    "district": "Monaragala",
+    "latitude": 6.8732,
+    "longitude": 81.0654,
+    "brightness": 341.0,
+    "confidence": 98.0,
+    "acq_date": "2026-08-05",
+    "acq_time": "11:00",
+    "satellite": "VIIRS_SNPP",
+    "frp": 25.1,
+    "is_active": false
+  },
+  {
+    "id": 4,
+    "name": "Mihintale Sanctuary Fire",
+    "district": "Anuradhapura",
+    "latitude": 8.3541,
+    "longitude": 80.5023,
+    "brightness": 322.6,
+    "confidence": 76.0,
+    "acq_date": "2026-07-28",
+    "acq_time": "09:45",
+    "satellite": "VIIRS_SNPP",
+    "frp": 5.2,
+    "is_active": false
+  },
+  {
+    "id": 5,
+    "name": "Hambantota Dry Scrub Fire",
+    "district": "Hambantota",
+    "latitude": 6.1245,
+    "longitude": 81.1234,
+    "brightness": 331.5,
+    "confidence": 88.0,
+    "acq_date": "2026-08-08",
+    "acq_time": "13:20",
+    "satellite": "VIIRS_NOAA20",
+    "frp": 12.1,
+    "is_active": false
+  }
+]

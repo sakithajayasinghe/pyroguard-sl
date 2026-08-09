@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./backend/app/data:/workspace/app/data
+      - ./shared_data:/workspace/shared_data
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=sqlite:////workspace/shared_data/pyroguard.db
