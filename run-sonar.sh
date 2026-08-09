@@ -5,7 +5,7 @@ echo "=== System configurations ==="
 sudo sysctl -w vm.max_map_count=262144
 
 echo "=== Ensuring SonarQube is running ==="
-docker compose -f /data/sonarqube/docker-compose.yml up -d
+docker compose -f docker/sonarqube/docker-compose.yml up -d
 
 echo "=== Waiting for SonarQube to be ready ==="
 for i in {1..50}; do
