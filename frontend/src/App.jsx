@@ -6,7 +6,7 @@ import {
   Upload, Play, Info, Activity, Bell, Map as MapIcon, RefreshCw, Layers, ShieldAlert, Cpu
 } from 'lucide-react';
 import { 
-  BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer,
+  BarChart, Bar, Cell, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer,
   LineChart, Line, CartesianGrid, Legend 
 } from 'recharts';
 import { useDropzone } from 'react-dropzone';
@@ -166,7 +166,7 @@ export default function App() {
   };
 
   const handleDistrictClick = (e, feature) => {
-    setSelectedDistrict(feature.properties.name || "Unknown District");
+    setSelectedDistrict(feature.properties.ADM2_EN || feature.properties.name || "Unknown District");
     setSelectedHotspot(null);
   };
 
@@ -257,7 +257,7 @@ export default function App() {
                       <RechartsTooltip cursor={{fill: 'rgba(51, 65, 85, 0.4)'}} content={<CustomTooltip />} />
                       <Bar dataKey="impact" radius={[0, 6, 6, 0]} barSize={24}>
                         {XAI_DATA.map((entry, index) => (
-                          <cell key={`cell-${index}`} fill={`url(#colorImpact${index})`} />
+                          <Cell key={`cell-${index}`} fill={`url(#colorImpact${index})`} />
                         ))}
                       </Bar>
                       <defs>
