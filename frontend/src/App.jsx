@@ -101,13 +101,13 @@ const pulseIcon = L.divIcon({
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 p-3 rounded-lg shadow-xl text-xs">
-        <p className="font-semibold text-slate-200 mb-2">{label}</p>
+      <div className="bg-white/90 backdrop-blur-md border border-slate-200/80 p-3 rounded-lg shadow-xl text-xs text-slate-800">
+        <p className="font-semibold text-slate-800 mb-2">{label}</p>
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-2 mb-1">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="text-slate-300 capitalize">{entry.name}:</span>
-            <span className="font-bold text-slate-100">{entry.value}</span>
+            <span className="text-slate-600 capitalize">{entry.name}:</span>
+            <span className="font-bold text-slate-900">{entry.value}</span>
           </div>
         ))}
       </div>
@@ -160,7 +160,7 @@ export default function App() {
       fillColor: '#f97316', // orange-500
       weight: 1,
       opacity: 0.8,
-      color: '#334155', // slate-700
+      color: '#cbd5e1', // slate-300
       fillOpacity: 0.15
     };
   };
@@ -171,10 +171,10 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-slate-950 text-slate-100 overflow-hidden font-sans selection:bg-orange-500/30">
+    <div className="flex h-screen w-full bg-slate-50 text-slate-900 overflow-hidden font-sans selection:bg-orange-500/30">
       
       {/* Sidebar Panel - Always visible, displays default dashboard when nothing is selected */}
-      <div className="w-[420px] shrink-0 bg-slate-950/80 backdrop-blur-xl border-r border-slate-800/60 flex flex-col z-[1001] shadow-2xl transition-all duration-300">
+      <div className="w-[420px] shrink-0 backdrop-blur-xl bg-white/85 border-r border-slate-200/80 flex flex-col z-[1001] shadow-xl text-slate-900 transition-all duration-300">
         
         <div className="p-6 flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-6">
           <div className="flex items-center justify-between">
@@ -185,7 +185,7 @@ export default function App() {
             {(selectedDistrict || selectedHotspot) && (
               <button 
                 onClick={() => {setSelectedDistrict(null); setSelectedHotspot(null);}} 
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200/50 hover:bg-slate-300 text-slate-500 hover:text-slate-800 transition-colors"
                 title="Back to Dashboard"
               >
                 ✕
@@ -195,19 +195,19 @@ export default function App() {
 
           {selectedHotspot ? (
             <div className="space-y-6 animate-in slide-in-from-left-4 fade-in duration-300">
-              <div className="bg-gradient-to-br from-red-900/40 to-slate-900/60 border border-red-500/30 p-5 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)]">
-                <h2 className="text-xl font-bold text-red-400 mb-4 flex items-center gap-2">
+              <div className="bg-gradient-to-br from-red-50/80 to-white/90 border border-red-200 p-5 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+                <h2 className="text-xl font-bold text-red-600 mb-4 flex items-center gap-2">
                   <AlertTriangle size={22} className="drop-shadow-[0_0_8px_rgba(248,113,113,0.8)]" /> 
                   Active Hotspot Details
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-950/80 p-4 rounded-xl border border-slate-800/50 shadow-inner">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1 font-medium">Temperature</p>
+                  <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1 font-medium">Temperature</p>
                     <p className="text-2xl font-bold text-orange-400">{selectedHotspot.temp}°C</p>
                   </div>
-                  <div className="bg-slate-950/80 p-4 rounded-xl border border-slate-800/50 shadow-inner">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1 font-medium">Fire Radiative Power</p>
-                    <p className="text-2xl font-bold text-red-400">{selectedHotspot.frp} MW</p>
+                  <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1 font-medium">Fire Radiative Power</p>
+                    <p className="text-2xl font-bold text-red-600">{selectedHotspot.frp} MW</p>
                   </div>
                 </div>
                 
@@ -222,38 +222,38 @@ export default function App() {
             </div>
           ) : selectedDistrict ? (
             <div className="space-y-6 animate-in slide-in-from-left-4 fade-in duration-300">
-              <h2 className="text-2xl font-bold border-b border-slate-800/60 pb-3 flex items-center gap-2">
-                <MapIcon className="text-slate-400" size={24}/>
+              <h2 className="text-2xl font-bold border-b border-slate-200 pb-3 flex items-center gap-2">
+                <MapIcon className="text-slate-600" size={24}/>
                 {selectedDistrict} Region
               </h2>
               
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-slate-800/40 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/50 flex flex-col items-center justify-center text-center hover:bg-slate-800/60 transition-colors shadow-sm">
+                <div className="bg-slate-100/40 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/50 flex flex-col items-center justify-center text-center hover:bg-slate-100/60 transition-colors shadow-sm">
                   <Thermometer className="text-orange-400 mb-2 drop-shadow-[0_0_5px_rgba(251,146,60,0.6)]" size={26} />
                   <span className="text-lg font-bold">32°C</span>
-                  <span className="text-xs text-slate-400 font-medium">Avg Temp</span>
+                  <span className="text-xs text-slate-500 font-medium">Avg Temp</span>
                 </div>
-                <div className="bg-slate-800/40 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/50 flex flex-col items-center justify-center text-center hover:bg-slate-800/60 transition-colors shadow-sm">
+                <div className="bg-slate-100/40 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/50 flex flex-col items-center justify-center text-center hover:bg-slate-100/60 transition-colors shadow-sm">
                   <Wind className="text-sky-400 mb-2 drop-shadow-[0_0_5px_rgba(56,189,248,0.6)]" size={26} />
                   <span className="text-lg font-bold">15 km/h</span>
-                  <span className="text-xs text-slate-400 font-medium">Wind Spd</span>
+                  <span className="text-xs text-slate-500 font-medium">Wind Spd</span>
                 </div>
-                <div className="bg-slate-800/40 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/50 flex flex-col items-center justify-center text-center hover:bg-slate-800/60 transition-colors shadow-sm">
+                <div className="bg-slate-100/40 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/50 flex flex-col items-center justify-center text-center hover:bg-slate-100/60 transition-colors shadow-sm">
                   <CloudRain className="text-emerald-400 mb-2 drop-shadow-[0_0_5px_rgba(52,211,153,0.6)]" size={26} />
                   <span className="text-lg font-bold">45%</span>
-                  <span className="text-xs text-slate-400 font-medium">Humidity</span>
+                  <span className="text-xs text-slate-500 font-medium">Humidity</span>
                 </div>
               </div>
 
-              <div className="bg-slate-900/60 p-5 rounded-2xl border border-slate-800/80 shadow-md">
-                <h3 className="text-sm font-bold text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
+              <div className="bg-white/80 p-5 rounded-2xl border border-slate-200/80 shadow-md">
+                <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
                   <Activity size={16} className="text-indigo-400" /> SHAP Risk Explainability
                 </h3>
                 <div className="h-52">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={XAI_DATA} layout="vertical" margin={{ top: 0, right: 10, left: -25, bottom: 0 }}>
                       <XAxis type="number" hide />
-                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 500 }} />
+                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} />
                       <RechartsTooltip cursor={{fill: 'rgba(51, 65, 85, 0.4)'}} content={<CustomTooltip />} />
                       <Bar dataKey="impact" radius={[0, 6, 6, 0]} barSize={24}>
                         {XAI_DATA.map((entry, index) => (
@@ -273,16 +273,16 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="bg-slate-900/60 p-5 rounded-2xl border border-slate-800/80 shadow-md">
-                <h3 className="text-sm font-bold text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
+              <div className="bg-white/80 p-5 rounded-2xl border border-slate-200/80 shadow-md">
+                <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
                   <CloudRain size={16} className="text-sky-400" /> 24h Micro-climate Trend
                 </h3>
                 <div className="h-52">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={WEATHER_TRENDS} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                      <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} dy={10} />
-                      <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                      <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} dy={10} />
+                      <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} />
                       <RechartsTooltip content={<CustomTooltip />} />
                       <Line yAxisId="left" type="monotone" dataKey="temp" name="Temp (°C)" stroke="#f97316" strokeWidth={3} dot={{ r: 3, fill: '#f97316', strokeWidth: 0 }} activeDot={{ r: 6, strokeWidth: 0 }} />
                       <Line yAxisId="left" type="monotone" dataKey="humidity" name="Humidity (%)" stroke="#38bdf8" strokeWidth={3} dot={{ r: 3, fill: '#38bdf8', strokeWidth: 0 }} activeDot={{ r: 6, strokeWidth: 0 }} />
@@ -295,31 +295,31 @@ export default function App() {
           ) : (
             /* Default Dashboard View */
             <div className="space-y-6 animate-in fade-in duration-500">
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800/80 shadow-lg">
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-white to-slate-50 border border-slate-200 shadow-lg">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wide flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide flex items-center gap-2">
                     <ShieldAlert size={16} className="text-rose-500" /> System Threat Level
                   </h3>
                   <span className="px-2.5 py-1 text-xs font-bold bg-rose-500/20 text-rose-400 rounded-full border border-rose-500/30">ELEVATED</span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-400">Active Wildfires</span>
+                    <span className="text-slate-600">Active Wildfires</span>
                     <span className="font-bold text-rose-500 text-lg">3</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-400">Districts at Risk</span>
+                    <span className="text-slate-600">Districts at Risk</span>
                     <span className="font-bold text-orange-400 text-lg">5</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-400">Sensors Online</span>
+                    <span className="text-slate-600">Sensors Online</span>
                     <span className="font-bold text-emerald-400 text-lg">1,248</span>
                   </div>
                 </div>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-md">
-                <h3 className="text-sm font-bold text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
+                <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
                   <Cpu size={16} className="text-blue-400" /> Recent AI Detections
                 </h3>
                 <div className="space-y-3">
@@ -328,12 +328,12 @@ export default function App() {
                     { time: '15 mins ago', loc: 'Kandy Region', conf: '88%', type: 'Drone' },
                     { time: '1 hr ago', loc: 'Monaragala', conf: '91%', type: 'Sensor' }
                   ].map((alert, idx) => (
-                    <div key={idx} className="flex flex-col p-3 rounded-xl bg-slate-950/50 border border-slate-800/50 hover:border-slate-700 transition-colors cursor-pointer">
+                    <div key={idx} className="flex flex-col p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="font-semibold text-sm text-slate-200">{alert.loc}</span>
+                        <span className="font-semibold text-sm text-slate-800">{alert.loc}</span>
                         <span className="text-xs text-slate-500">{alert.time}</span>
                       </div>
-                      <div className="flex justify-between items-center text-xs text-slate-400">
+                      <div className="flex justify-between items-center text-xs text-slate-500">
                         <span>Source: {alert.type}</span>
                         <span className="text-blue-400 font-medium">Conf: {alert.conf}</span>
                       </div>
@@ -347,8 +347,8 @@ export default function App() {
                   <Activity size={20} className="text-emerald-400" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-slate-200">System Nominal</h4>
-                  <p className="text-xs text-slate-400 mt-0.5">All ingestion pipelines and inference engines are operational.</p>
+                  <h4 className="text-sm font-bold text-slate-800">System Nominal</h4>
+                  <p className="text-xs text-slate-500 mt-0.5">All ingestion pipelines and inference engines are operational.</p>
                 </div>
               </div>
             </div>
@@ -362,15 +362,15 @@ export default function App() {
         {/* Top Navbar / Floating Overlays */}
         <div className="absolute top-6 left-6 right-6 flex justify-between items-start z-[1000] pointer-events-none">
           <div className="pointer-events-auto flex items-center gap-3">
-             <div className="bg-slate-950/80 backdrop-blur-xl p-1.5 rounded-2xl border border-slate-700/60 flex items-center shadow-2xl">
+             <div className="bg-white/85 backdrop-blur-xl p-1.5 rounded-2xl border border-slate-200/80 flex items-center shadow-2xl">
                 <button 
-                  className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${isLiveMode ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-900/40' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+                  className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${isLiveMode ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-900/40' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-100/50'}`}
                   onClick={() => setIsLiveMode(true)}
                 >
                   LIVE DATA
                 </button>
                 <button 
-                  className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${!isLiveMode ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/40' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+                  className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${!isLiveMode ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/40' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-100/50'}`}
                   onClick={() => setIsLiveMode(false)}
                 >
                   HISTORICAL SIM
@@ -395,11 +395,11 @@ export default function App() {
             zoom={7} 
             zoomControl={false}
             className="w-full h-full"
-            style={{ background: '#020617' }}
+            style={{ background: '#f8fafc' }}
           >
             <TileLayer
               attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             />
             
             {districtsData && (
@@ -429,9 +429,9 @@ export default function App() {
                     ⚠️ HIGH RISK HOTSPOT
                   </div>
                   <div className="custom-popup-body">
-                    <div className="mb-2"><span className="text-slate-400">Detected:</span> <span className="text-white font-medium">{h.time}</span></div>
-                    <div className="mb-2"><span className="text-slate-400">Temp:</span> <span className="text-orange-400 font-bold">{h.temp}°C</span></div>
-                    <div><span className="text-slate-400">Est. FRP:</span> <span className="text-red-400 font-bold">{h.frp} MW</span></div>
+                    <div className="mb-2"><span className="text-slate-600">Detected:</span> <span className="text-white font-medium">{h.time}</span></div>
+                    <div className="mb-2"><span className="text-slate-600">Temp:</span> <span className="text-orange-400 font-bold">{h.temp}°C</span></div>
+                    <div><span className="text-slate-600">Est. FRP:</span> <span className="text-red-600 font-bold">{h.frp} MW</span></div>
                   </div>
                 </Popup>
               </Marker>
@@ -455,9 +455,9 @@ export default function App() {
                     📡 IoT SENSOR #{s.id}
                   </div>
                   <div className="custom-popup-body">
-                    <div className="mb-1"><span className="text-slate-400">Status:</span> <span className="text-white font-bold uppercase">{s.status}</span></div>
-                    <div className="mb-1"><span className="text-slate-400">Ground Temp:</span> <span className="text-white font-medium">{s.temp}°C</span></div>
-                    <div><span className="text-slate-400">Smoke (AQI):</span> <span className="text-white font-medium">{s.smoke}</span></div>
+                    <div className="mb-1"><span className="text-slate-600">Status:</span> <span className="text-white font-bold uppercase">{s.status}</span></div>
+                    <div className="mb-1"><span className="text-slate-600">Ground Temp:</span> <span className="text-white font-medium">{s.temp}°C</span></div>
+                    <div><span className="text-slate-600">Smoke (AQI):</span> <span className="text-white font-medium">{s.smoke}</span></div>
                   </div>
                 </Popup>
               </CircleMarker>
@@ -483,28 +483,28 @@ export default function App() {
 
       {/* Report Fire Modal */}
       {showReportModal && (
-        <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md z-[2000] flex items-center justify-center animate-in fade-in p-4">
-          <div className="bg-slate-900/95 border border-slate-700/60 p-8 rounded-3xl w-full max-w-2xl shadow-2xl shadow-black">
+        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md z-[2000] flex items-center justify-center animate-in fade-in p-4">
+          <div className="bg-white border-slate-200 p-8 rounded-3xl w-full max-w-2xl shadow-2xl shadow-black">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-bold flex items-center gap-3 text-slate-100">
+              <h2 className="text-2xl font-bold flex items-center gap-3 text-slate-900">
                 <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
                   <Upload className="text-blue-400" size={20} />
                 </div>
                 Analyze Image (YOLOv8)
               </h2>
-              <button onClick={() => {setShowReportModal(false); setUploadedImage(null);}} className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">✕</button>
+              <button onClick={() => {setShowReportModal(false); setUploadedImage(null);}} className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:text-white hover:bg-slate-700 transition-colors">✕</button>
             </div>
             
             {!uploadedImage ? (
               <div 
                 {...getRootProps()} 
-                className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 ${isDragActive ? 'border-blue-500 bg-blue-500/10 scale-[1.01]' : 'border-slate-700 hover:border-slate-500 hover:bg-slate-800/30'}`}
+                className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 ${isDragActive ? 'border-blue-500 bg-blue-500/10 scale-[1.01]' : 'border-slate-300 hover:border-slate-400 hover:bg-slate-50'}`}
               >
                 <input {...getInputProps()} />
-                <div className="w-20 h-20 rounded-full bg-slate-800 mx-auto flex items-center justify-center mb-6">
-                  <Upload size={32} className="text-slate-400" />
+                <div className="w-20 h-20 rounded-full bg-slate-100 mx-auto flex items-center justify-center mb-6">
+                  <Upload size={32} className="text-slate-600" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-200 mb-2">Drag & drop a satellite or drone image</h3>
+                <h3 className="text-lg font-bold text-slate-800 mb-2">Drag & drop a satellite or drone image</h3>
                 <p className="text-slate-500 text-sm">Supports high-res PNG, JPG, TIFF for inference</p>
               </div>
             ) : (
@@ -513,7 +513,7 @@ export default function App() {
                   <img src={uploadedImage} alt="Uploaded" className="max-w-full max-h-full object-contain opacity-90" />
                   
                   {isDetecting ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm">
                       <div className="relative w-16 h-16 mb-4">
                          <div className="absolute inset-0 border-4 border-blue-500/30 rounded-full"></div>
                          <div className="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -535,13 +535,13 @@ export default function App() {
                     </div>
                     <div>
                       <h4 className="font-bold text-emerald-400 text-sm mb-1">Detection Pipeline Complete</h4>
-                      <p className="text-sm text-slate-300">Isolated 1 thermal anomaly. Coordinates automatically logged and synced with decentralized alert mesh.</p>
+                      <p className="text-sm text-slate-700">Isolated 1 thermal anomaly. Coordinates automatically logged and synced with decentralized alert mesh.</p>
                     </div>
                   </div>
                 )}
                 
-                <div className="flex justify-end gap-3 pt-4 border-t border-slate-800/60">
-                  <button onClick={() => setUploadedImage(null)} className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">Discard</button>
+                <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+                  <button onClick={() => setUploadedImage(null)} className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-white hover:bg-slate-100 transition-colors">Discard</button>
                   <button disabled={isDetecting} className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:opacity-50 text-white rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-blue-900/50">
                     CONFIRM & BROADCAST
                   </button>

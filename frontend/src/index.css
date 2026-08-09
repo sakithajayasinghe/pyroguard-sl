@@ -6,7 +6,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #020617; /* slate-950 */
+  background-color: #f8fafc; /* slate-50 */
 }
 
 #root {
@@ -46,21 +46,21 @@ body {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #334155; /* slate-700 */
+  background: #cbd5e1; /* slate-700 */
   border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #475569; /* slate-600 */
+  background: #94a3b8; /* slate-600 */
 }
 
 /* Leaflet dark theme overrides */
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background: rgba(15, 23, 42, 0.95) !important; /* slate-900 */
+  background: rgba(255, 255, 255, 0.95) !important; /* slate-900 */
   backdrop-filter: blur(8px);
-  color: #f1f5f9 !important; /* slate-100 */
-  border: 1px solid rgba(51, 65, 85, 0.8) !important; /* slate-700 */
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3) !important;
+  color: #0f172a !important; /* slate-100 */
+  border: 1px solid rgba(226, 232, 240, 0.8) !important; /* slate-700 */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
   border-radius: 0.75rem !important;
 }
 
@@ -83,7 +83,7 @@ body {
 .custom-popup-body {
   padding: 12px;
   font-size: 13px;
-  color: #cbd5e1;
+  color: #475569;
 }
 
 /* Ticker Animation */
