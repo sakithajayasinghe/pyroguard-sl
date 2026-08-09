@@ -83,14 +83,32 @@ def get_hotspots(mode: str = Query("live")):
         file_path = "/data/AI-Challenge/backend/app/data/historical_fires.json"
         if os.path.exists(file_path):
             with open(file_path, "r") as f:
-                return json.load(f)
+                data = json.load(f)
+                return [
+                    {
+                        "id": h["id"],
+                        "lat": h["latitude"],
+                        "lng": h["longitude"],
+                        "temp": round(h["brightness"] - 273.15, 1) if h["brightness"] > 250 else h["brightness"],
+                        "frp": h["frp"],
+                        "time": f"{h['acq_date']} {h['acq_time']}"
+                    }
+                    for h in data
+                ]
         return []
     
-    # Mocking live data from FIRMS
+    # Mocking live data from FIRMS with matching keys
     import random
     return [
-        {"lat": 7.0 + random.random()*2, "lon": 80.0 + random.random()*1.5, "brightness": random.uniform(300, 350)}
-        for _ in range(5)
+        {
+            "id": i,
+            "lat": 7.0 + random.random() * 2,
+            "lng": 80.0 + random.random() * 1.5,
+            "temp": round(random.uniform(35, 55), 1),
+            "frp": round(random.uniform(50, 250), 1),
+            "time": f"{random.randint(1, 59)} mins ago"
+        }
+        for i in range(1, 6)
     ]
 
 @app.get("/api/v1/risk-map")

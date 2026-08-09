@@ -125,6 +125,8 @@ export default function App() {
   const [isDetecting, setIsDetecting] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [districtsData, setDistrictsData] = useState(null);
+  const [hotspots, setHotspots] = useState([]);
+  const [sensors, setSensors] = useState(MOCK_SENSORS);
 
   // Fetch real district GeoJSON boundaries from our backend API
   useEffect(() => {
@@ -142,6 +144,56 @@ export default function App() {
         });
       });
   }, []);
+
+  // Fetch active hotspots from our backend API depending on mode (live vs historical)
+  useEffect(() => {
+    const fetchHotspots = () => {
+      const modeParam = isLiveMode ? 'live' : 'demo';
+      fetch(`/api/v1/hotspots?mode=${modeParam}`)
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to load hotspots");
+          return res.json();
+        })
+        .then(data => setHotspots(data))
+        .catch(err => console.error("Error fetching hotspots:", err));
+    };
+
+    fetchHotspots();
+
+    // If live mode is active, set up real-time polling every 10 seconds
+    let interval;
+    if (isLiveMode) {
+      interval = setInterval(fetchHotspots, 10000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLiveMode]);
+
+  // Simulate live dynamic ground sensor data updates
+  useEffect(() => {
+    if (!isLiveMode) return;
+    const interval = setInterval(() => {
+      setSensors(prev => prev.map(s => {
+        const tempDelta = (Math.random() - 0.5) * 2; // small random temp variation
+        const smokeDelta = Math.floor((Math.random() - 0.5) * 4); // small random smoke variation
+        const newTemp = Math.max(20, Math.min(65, s.temp + tempDelta));
+        const newSmoke = Math.max(0, Math.min(100, s.smoke + smokeDelta));
+        
+        let newStatus = 'safe';
+        if (newSmoke > 70 || newTemp > 50) newStatus = 'danger';
+        else if (newSmoke > 35 || newTemp > 35) newStatus = 'warning';
+
+        return {
+          ...s,
+          temp: parseFloat(newTemp.toFixed(1)),
+          smoke: newSmoke,
+          status: newStatus
+        };
+      }));
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isLiveMode]);
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -409,7 +461,7 @@ export default function App() {
             )}
 
             {/* Fire Hotspots */}
-            {MOCK_HOTSPOTS.map(h => (
+            {hotspots.map(h => (
               <Marker 
                 key={h.id} 
                 position={[h.lat, h.lng]} 
@@ -432,7 +484,7 @@ export default function App() {
             ))}
 
             {/* Ground Sensors */}
-            {MOCK_SENSORS.map(s => (
+            {sensors.map(s => (
               <CircleMarker
                 key={s.id}
                 center={[s.lat, s.lng]}
@@ -457,7 +509,7 @@ export default function App() {
               </CircleMarker>
             ))}
 
-            <FireSpreadAnimation hotspots={MOCK_HOTSPOTS} isSimulating={isSimulating} />
+            <FireSpreadAnimation hotspots={hotspots} isSimulating={isSimulating} />
           </MapContainer>
         </div>
 
