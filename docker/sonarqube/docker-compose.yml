@@ -1,6 +1,6 @@
 services:
   sonarqube:
-    image: sonarqube:lts-community
+    image: sonarqube:10.7-community
     container_name: sonarqube
     depends_on:
       sonarqube-db:
