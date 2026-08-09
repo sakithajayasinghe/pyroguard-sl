@@ -2,7 +2,7 @@
 set -e
 
 echo "=== System configurations ==="
-sudo sysctl -w vm.max_map_count=262144
+sudo -n sysctl -w vm.max_map_count=262144 2>/dev/null || true
 
 echo "=== Ensuring SonarQube is running ==="
 docker compose -f docker/sonarqube/docker-compose.yml up -d
