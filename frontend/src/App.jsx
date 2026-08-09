@@ -157,11 +157,11 @@ export default function App() {
 
   const getDistrictStyle = (feature) => {
     return {
-      fillColor: '#f97316', // orange-500
+      fillColor: '#f59e0b',
       weight: 1,
       opacity: 0.8,
-      color: '#cbd5e1', // slate-300
-      fillOpacity: 0.15
+      color: '#cbd5e1',
+      fillOpacity: 0.1
     };
   };
 
@@ -171,10 +171,10 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 text-slate-900 overflow-hidden font-sans selection:bg-orange-500/30">
+    <div className="flex h-screen w-full bg-[#FAF9F6] text-slate-800 overflow-hidden font-sans selection:bg-emerald-500/30">
       
       {/* Sidebar Panel - Always visible, displays default dashboard when nothing is selected */}
-      <div className="w-[420px] shrink-0 backdrop-blur-xl bg-white/85 border-r border-slate-200/80 flex flex-col z-[1001] shadow-xl text-slate-900 transition-all duration-300">
+      <div className="w-[420px] shrink-0 backdrop-blur-xl bg-white/90 border-r border-stone-200/60 flex flex-col z-[1001] shadow-lg text-slate-800 transition-all duration-300">
         
         <div className="p-6 flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-6">
           <div className="flex items-center justify-between">
@@ -195,9 +195,9 @@ export default function App() {
 
           {selectedHotspot ? (
             <div className="space-y-6 animate-in slide-in-from-left-4 fade-in duration-300">
-              <div className="bg-gradient-to-br from-red-50/80 to-white/90 border border-red-200 p-5 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)]">
-                <h2 className="text-xl font-bold text-red-600 mb-4 flex items-center gap-2">
-                  <AlertTriangle size={22} className="drop-shadow-[0_0_8px_rgba(248,113,113,0.8)]" /> 
+              <div className="bg-rose-50 border border-rose-200 p-5 rounded-2xl shadow-[0_0_20px_rgba(225,29,72,0.05)] text-rose-700">
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <AlertTriangle size={22} className="drop-shadow-[0_0_8px_rgba(225,29,72,0.4)]" /> 
                   Active Hotspot Details
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
@@ -212,7 +212,7 @@ export default function App() {
                 </div>
                 
                 <button 
-                  className={`mt-5 w-full py-3.5 rounded-xl flex items-center justify-center gap-2 font-semibold transition-all duration-300 shadow-lg ${isSimulating ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-orange-900/50' : 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-red-900/50 hover:scale-[1.02] active:scale-[0.98]'}`}
+                  className={`mt-5 w-full py-3.5 rounded-xl flex items-center justify-center gap-2 font-semibold transition-all duration-300 shadow-lg ${isSimulating ? 'bg-[#c96245] text-white shadow-[#c96245]/50' : 'bg-gradient-to-r from-[#d97757] to-[#c96245] hover:from-[#c96245] hover:to-[#b7563c] text-white shadow-xl shadow-[#c96245]/30 hover:scale-[1.02] active:scale-[0.98]'}`}
                   onClick={() => setIsSimulating(!isSimulating)}
                 >
                   {isSimulating ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} className="ml-1" />}
@@ -263,8 +263,8 @@ export default function App() {
                       <defs>
                         {XAI_DATA.map((entry, index) => (
                           <linearGradient key={`colorImpact${index}`} id={`colorImpact${index}`} x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#f97316" stopOpacity={0.8}/>
-                            <stop offset="100%" stopColor="#ef4444" stopOpacity={1}/>
+                            <stop offset="0%" stopColor="#fcd34d" stopOpacity={0.8}/>
+                            <stop offset="100%" stopColor="#10b981" stopOpacity={1}/>
                           </linearGradient>
                         ))}
                       </defs>
@@ -295,12 +295,12 @@ export default function App() {
           ) : (
             /* Default Dashboard View */
             <div className="space-y-6 animate-in fade-in duration-500">
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-white to-slate-50 border border-slate-200 shadow-lg">
+              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/50 shadow-lg text-amber-800">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide flex items-center gap-2">
-                    <ShieldAlert size={16} className="text-rose-500" /> System Threat Level
+                  <h3 className="text-sm font-bold text-amber-900 uppercase tracking-wide flex items-center gap-2">
+                    <ShieldAlert size={16} className="text-amber-600" /> System Threat Level
                   </h3>
-                  <span className="px-2.5 py-1 text-xs font-bold bg-rose-500/20 text-rose-400 rounded-full border border-rose-500/30">ELEVATED</span>
+                  <span className="px-2.5 py-1 text-xs font-bold bg-amber-200/50 text-amber-700 rounded-full border border-amber-300">ELEVATED</span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
@@ -342,13 +342,13 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-md flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30">
-                  <Activity size={20} className="text-emerald-400" />
+              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 shadow-md flex items-center gap-4 text-emerald-700">
+                <div className="w-10 h-10 rounded-full bg-emerald-200/50 flex items-center justify-center shrink-0 border border-emerald-300">
+                  <Activity size={20} className="text-emerald-600" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-slate-800">System Nominal</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">All ingestion pipelines and inference engines are operational.</p>
+                  <h4 className="text-sm font-bold text-emerald-900">System Nominal</h4>
+                  <p className="text-xs text-emerald-700/80 mt-0.5">All ingestion pipelines and inference engines are operational.</p>
                 </div>
               </div>
             </div>
@@ -380,7 +380,7 @@ export default function App() {
 
           <div className="pointer-events-auto">
             <button 
-              className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white px-6 py-3 rounded-2xl shadow-xl shadow-red-900/30 font-bold flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] border border-red-500/50"
+              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-6 py-3 rounded-2xl shadow-xl shadow-emerald-900/30 font-bold flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] border border-emerald-500/50"
               onClick={() => setShowReportModal(true)}
             >
               <Upload size={18} /> REPORT FIRE (YOLOv8)
@@ -395,7 +395,7 @@ export default function App() {
             zoom={7} 
             zoomControl={false}
             className="w-full h-full"
-            style={{ background: '#f8fafc' }}
+            style={{ background: '#FAF9F6' }}
           >
             <TileLayer
               attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
@@ -468,8 +468,8 @@ export default function App() {
         </div>
 
         {/* Trilingual Alert Ticker - Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-10 bg-rose-600/90 backdrop-blur-md z-[1000] border-t border-rose-500/50 flex items-center overflow-hidden shadow-[0_-5px_20px_rgba(225,29,72,0.3)]">
-           <div className="px-4 h-full bg-rose-700 flex items-center justify-center font-bold text-white z-10 shadow-xl border-r border-rose-500 shadow-rose-900/50 uppercase tracking-widest text-xs shrink-0 gap-2">
+        <div className="absolute bottom-0 left-0 right-0 h-10 bg-slate-700/90 backdrop-blur-md z-[1000] border-t border-slate-600 flex items-center overflow-hidden shadow-lg">
+           <div className="px-4 h-full bg-slate-800 flex items-center justify-center font-bold text-white z-10 shadow-xl border-r border-slate-600 uppercase tracking-widest text-xs shrink-0 gap-2">
              <AlertTriangle size={16} className="animate-pulse" /> LIVE ALERTS
            </div>
            <div className="flex-1 overflow-hidden relative h-full flex items-center">
