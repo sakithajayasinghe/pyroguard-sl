@@ -21,9 +21,9 @@ L.Icon.Default.mergeOptions({
 
 // Mock Data
 const MOCK_HOTSPOTS = [
-  { id: 1, lat: 7.8731, lng: 80.7718, temp: 45, frp: 120, time: '10 mins ago' },
-  { id: 2, lat: 6.9271, lng: 79.8612, temp: 38, frp: 90, time: '1 hour ago' },
-  { id: 3, lat: 8.3114, lng: 80.4037, temp: 52, frp: 210, time: '2 mins ago' }
+  { id: 1, lat: 8.3541, lng: 80.5023, temp: 45, frp: 120, time: '10 mins ago' },
+  { id: 2, lat: 6.8625, lng: 81.0431, temp: 38, frp: 90, time: '1 hour ago' },
+  { id: 3, lat: 7.4284, lng: 80.7812, temp: 52, frp: 210, time: '2 mins ago' }
 ];
 
 const MOCK_SENSORS = [
@@ -116,6 +116,159 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
+const TRANSLATIONS = {
+  en: {
+    liveData: "LIVE DATA",
+    historicalSim: "HISTORICAL SIM",
+    reportFire: "REPORT FIRE (YOLOv8)",
+    threatLevel: "System Threat Level",
+    activeWildfires: "Active Wildfires",
+    districtsAtRisk: "Districts at Risk",
+    sensorsOnline: "Sensors Online",
+    recentDetections: "Recent AI Detections",
+    systemNominal: "System Nominal",
+    nominalDesc: "All ingestion pipelines and inference engines are operational.",
+    guideTitle: "System Guide",
+    guideIot: "IoT Ground Sensors: Circular markers displaying real-time telemetry (temp, smoke) which fluctuate dynamically on the map.",
+    guideSim: "Predict Spread (AI): Click any active hotspot marker, then click 'Predict Spread' to simulate 1-4 hour wildfire front propagation via Cellular Automata.",
+    guideXai: "Explainable AI (XAI): Click any district region to analyze localized micro-climate trends and the SHAP contribution weights of risk factors.",
+    guideYolo: "YOLOv8 Verification: Use 'Report Fire' to upload drone or satellite imagery to verify smoke alerts in real-time.",
+    tempLabel: "Temperature",
+    frpLabel: "Fire Radiative Power",
+    predictSpreadBtn: "Predict Spread (AI)",
+    simulatingSpreadBtn: "Simulating Cellular Automata...",
+    spreadForecastActive: "Spread Forecast Active",
+    spreadDesc1: "Predicting wildfire front propagation over the next 1 to 4 hours using a Cellular Automata (CA) model.",
+    spreadDesc2: "It calculates grid states dynamically by combining local digital elevation contours with wind velocity vectors (currently 15 km/h). The expanding orange rings on the map delineate the high-probability buffer boundaries.",
+    hotspotDetailsTitle: "Active Hotspot Details",
+    avgTemp: "Avg Temp",
+    windSpd: "Wind Spd",
+    humidity: "Humidity",
+    shapTitle: "SHAP Risk Explainability",
+    microclimateTrend: "24h Micro-climate Trend",
+    tempTrendLabel: "Temp (°C)",
+    humidityTrendLabel: "Humidity (%)",
+    highRiskHotspotPopup: "⚠️ HIGH RISK HOTSPOT",
+    detectedPopup: "Detected",
+    tempPopup: "Temp",
+    estFrpPopup: "Est. FRP",
+    iotSensorPopup: "📡 IoT SENSOR",
+    statusPopup: "Status",
+    groundTempPopup: "Ground Temp",
+    smokePopup: "Smoke (AQI)",
+    liveAlertsLabel: "LIVE ALERTS",
+    // YOLO Modal
+    analyzeImageTitle: "Analyze Image (YOLOv8)",
+    dragDropTitle: "Drag & drop a satellite or drone image",
+    dragDropDesc: "Supports high-res PNG, JPG, TIFF for inference",
+    runningInference: "RUNNING TENSORRT OPTIMIZED INFERENCE...",
+    detectionPipelineComplete: "Detection Pipeline Complete",
+    anomalyIsolated: "Isolated 1 thermal anomaly. Coordinates automatically logged and synced with decentralized alert mesh.",
+    discardBtn: "Discard",
+    confirmBroadcastBtn: "CONFIRM & BROADCAST"
+  },
+  si: {
+    liveData: "සජීවී දත්ත",
+    historicalSim: "පසුගිය දත්ත",
+    reportFire: "ගින්නක් වාර්තා කරන්න (YOLOv8)",
+    threatLevel: "පද්ධති අවදානම් මට්ටම",
+    activeWildfires: "සක්‍රීය ලැව්ගිනි ගණන",
+    districtsAtRisk: "අවදානමේ ඇති දිස්ක්‍රික්ක",
+    sensorsOnline: "සක්‍රීය සංවේදක",
+    recentDetections: "ቅርතම AI හඳුනාගැනීම්",
+    systemNominal: "පද්ධතිය ක්‍රියාත්මකයි",
+    nominalDesc: "සියලුම දත්ත සැකසුම් සහ AI පද්ධති ක්‍රියාත්මකයි.",
+    guideTitle: "පද්ධති මාර්ගෝපදේශය",
+    guideIot: "IoT ගොඩබිම් සංවේදක: සිතියමේ සජීවීව වෙනස් වන උෂ්ණත්ව සහ දුම් දර්ශක පෙන්වන රවුම් ලකුණු.",
+    guideSim: "පැතිරීම පුරෝකථනය (AI): සක්‍රීය ලැව්ගිනි සලකුණක් ක්ලික් කර 'Predict Spread' ක්ලික් කිරීමෙන් පැතිරීම ගණනය කෙරේ.",
+    guideXai: "Explainable AI (XAI): දිස්ත්‍රික්කයක් ක්ලික් කිරීමෙන් කාලගුණ ප්‍රවණතා සහ SHAP අවදානම් සාධක බලාගත හැක.",
+    guideYolo: "YOLOv8 පරීක්ෂාව: ඩ්‍රෝන් හෝ චන්ද්‍රිකා ඡායාරූප මඟින් ලැව්ගිනි තහවුරු කිරීමට 'Report Fire' භාවිත කරන්න.",
+    tempLabel: "උෂ්ණත්වය",
+    frpLabel: "විකිරණ බලය (FRP)",
+    predictSpreadBtn: "පැතිරීම පුරෝකථනය කරන්න (AI)",
+    simulatingSpreadBtn: "පැතිරීම ගණනය කෙරේ...",
+    spreadForecastActive: "පැතිරීමේ අනාවැකිය සක්‍රීයයි",
+    spreadDesc1: "සෙලියුලර් ඔටෝමාටා (CA) ආකෘතිය භාවිතයෙන් ඉදිරි පැය 1-4 තුළ ලැව්ගිනි පැතිරීම අනාවැකි පල කරයි.",
+    spreadDesc2: "සුළඟේ වේගය (15 km/h) සහ භූමි බෑවුම් සමඟ සජීවීව පැතිරීමේ සීමාවන් සිතියමේ රවුම් මඟින් පෙන්වයි.",
+    hotspotDetailsTitle: "ලැව්ගිනි තොරතුරු",
+    avgTemp: "සාමාන්‍ය උෂ්ණත්වය",
+    windSpd: "සුළඟේ වේගය",
+    humidity: "ආර්ද්‍රතාවය",
+    shapTitle: "SHAP අවදානම් විශ්ලේෂණය",
+    microclimateTrend: "පැය 24 කාලගුණ ප්‍රවණතාව",
+    tempTrendLabel: "උෂ්ණත්වය (°C)",
+    humidityTrendLabel: "ආර්ද්‍රතාවය (%)",
+    highRiskHotspotPopup: "⚠️ අධික අවදානම් කලාපය",
+    detectedPopup: "හඳුනාගත් වෙලාව",
+    tempPopup: "උෂ්ණත්වය",
+    estFrpPopup: "ඇස්තමේන්තුගත FRP",
+    iotSensorPopup: "📡 IoT සංවේදකය",
+    statusPopup: "තත්ත්වය",
+    groundTempPopup: "පොළව උෂ්ණත්වය",
+    smokePopup: "දුමාරය (AQI)",
+    liveAlertsLabel: "සජීවී අනතුරු ඇඟවීම්",
+    // YOLO Modal
+    analyzeImageTitle: "ඡායාරූප විශ්ලේෂණය (YOLOv8)",
+    dragDropTitle: "ඩ්‍රෝන් හෝ චන්ද්‍රිකා ඡායාරූපයක් මෙතැනට දමන්න",
+    dragDropDesc: "PNG, JPG, TIFF ඡායාරූප සඳහා සහය දක්වයි",
+    runningInference: "YOLOv8 AI විශ්ලේෂණය ක්‍රියාත්මකයි...",
+    detectionPipelineComplete: "විශ්ලේෂණය සම්පූර්ණයි",
+    anomalyIsolated: "ලැව්ගින්නක් හඳුනා ගන්නා ලදී. ඛණ්ඩාංක සටහන් කර පද්ධතිය යාවත්කාලීන කර ඇත.",
+    discardBtn: "ඉවත් කරන්න",
+    confirmBroadcastBtn: "තහවුරු කර විකාශය කරන්න"
+  },
+  ta: {
+    liveData: "நேரடி தரவு",
+    historicalSim: "வரலாற்று உருவகப்படுத்துதல்",
+    reportFire: "தீயை புகாரளிக்கவும் (YOLOv8)",
+    threatLevel: "அமைப்பு அபாய நிலை",
+    activeWildfires: "செயலில் உள்ள காட்டுத்தீ",
+    districtsAtRisk: "அபாயத்தில் உள்ள மாவட்டங்கள்",
+    sensorsOnline: "செயலில் உள்ள சென்சார்கள்",
+    recentDetections: "சமீபத்திய AI கண்டுபிடிப்பப்புகள்",
+    systemNominal: "அமைப்பு வழமையானது",
+    nominalDesc: "அனைத்து தரவு உட்செலுத்துதல் மற்றும் AI அமைப்புகள் சீராக இயங்குகின்றன.",
+    guideTitle: "அமைப்பு வழிகாட்டி",
+    guideIot: "IoT தரை சென்சார்கள்: வரைபடத்தில் வெப்பநிலை மற்றும் புகை அளவைக் காட்டும் வட்டக் குறிகள்.",
+    guideSim: "பரவல் கணிப்பு (AI): காட்டுத்தீ குறியைக் கிளிக் செய்து, 'Predict Spread' கிளிக் செய்வதன் மூலம் பரவல் கணிக்கப்படும்.",
+    guideXai: "விளக்கமளிக்கக்கூடிய AI (XAI): வானிலை மற்றும் அபாய காரணிகளை பகுப்பாய்வு செய்ய மாவட்டத்தைக் கிளிக் செய்க.",
+    guideYolo: "YOLOv8 சரிபார்ப்பு: ட்ரோன் அல்லது செயற்கைக்கோள் படங்களை சரிபார்க்க 'Report Fire' ஐப் பயன்படுத்தவும்.",
+    tempLabel: "வெப்பநிலை",
+    frpLabel: "கதிர்வீச்சு சக்தி (FRP)",
+    predictSpreadBtn: "பரவலைக் கணித்தல் (AI)",
+    simulatingSpreadBtn: "பரவல் உருவகப்படுத்தப்படுகிறது...",
+    spreadForecastActive: "பரவல் கணிப்பு செயலில் உள்ளது",
+    spreadDesc1: "செல்லுலார் ஆட்டோமேட்டா (CA) மாதிரியைப் பயன்படுத்தி அடுத்த 1-4 மணிநேர காட்டுத்தீ பரவல் கணிக்கப்படுகிறது.",
+    spreadDesc2: "காற்றின் வேகம் (15 கிமீ/ம) மற்றும் நிலப்பரப்பு சரிவுகளுடன் பரவல் வரம்புகள் வரைபடத்தில் வட்டங்களால் காட்டப்படுகின்றன.",
+    hotspotDetailsTitle: "செயலில் உள்ள காட்டுத்தீ விவரங்கள்",
+    avgTemp: "சராசரி வெப்பநிலை",
+    windSpd: "காற்றின் வேகம்",
+    humidity: "ஈரப்பதம்",
+    shapTitle: "SHAP அபாய பகுப்பாய்வு",
+    microclimateTrend: "24 மணி நேர காலநிலை போக்கு",
+    tempTrendLabel: "வெப்பநிலை (°C)",
+    humidityTrendLabel: "ஈரப்பதம் (%)",
+    highRiskHotspotPopup: "⚠️ அதிக அபாய வலயங்கள்",
+    detectedPopup: "கண்டறியப்பட்டது",
+    tempPopup: "வெப்பநிலை",
+    estFrpPopup: "மதிப்பிடப்பட்ட FRP",
+    iotSensorPopup: "📡 IoT சென்சார்",
+    statusPopup: "நிலை",
+    groundTempPopup: "தரை வெப்பநிலை",
+    smokePopup: "புகை (AQI)",
+    liveAlertsLabel: "நேரடி எச்சரிக்கைகள்",
+    // YOLO Modal
+    analyzeImageTitle: "புகைப்பட பகுப்பாய்வு (YOLOv8)",
+    dragDropTitle: "செயற்கைக்கோள் அல்லது ட்ரோன் படத்தை இங்கே இழுத்து விடவும்",
+    dragDropDesc: "PNG, JPG, TIFF கோப்புகள் ஆதரிக்கப்படுகின்றன",
+    runningInference: "YOLOv8 AI பகுப்பாய்வு இயங்குகிறது...",
+    detectionPipelineComplete: "பகுப்பாய்வு முடிந்தது",
+    anomalyIsolated: "தீ கண்டறியப்பட்டது. ஆயத்தொலைவுகள் பதிவு செய்யப்பட்டு அறிவிக்கப்பட்டுள்ளன.",
+    discardBtn: "நிராகரி",
+    confirmBroadcastBtn: "உறுதிப்படுத்தி ஒளிபரப்பவும்"
+  }
+};
+
 export default function App() {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedHotspot, setSelectedHotspot] = useState(null);
@@ -127,6 +280,9 @@ export default function App() {
   const [districtsData, setDistrictsData] = useState(null);
   const [hotspots, setHotspots] = useState([]);
   const [sensors, setSensors] = useState(MOCK_SENSORS);
+  const [lang, setLang] = useState('en');
+
+  const t = (key) => TRANSLATIONS[lang][key] || key;
 
   // Fetch real district GeoJSON boundaries from our backend API
   useEffect(() => {
@@ -232,7 +388,7 @@ export default function App() {
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
               <Flame size={28} className="text-orange-500" />
-              PyroGuard SL
+              {lang === 'en' ? 'PyroGuard SL' : lang === 'si' ? 'පයිරෝගාඩ් SL' : 'பைரோகார்ட் SL'}
             </h1>
             {(selectedDistrict || selectedHotspot) && (
               <button 
@@ -250,15 +406,15 @@ export default function App() {
               <div className="bg-rose-50 border border-rose-200 p-5 rounded-2xl shadow-[0_0_20px_rgba(225,29,72,0.05)] text-rose-700">
                 <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <AlertTriangle size={22} className="drop-shadow-[0_0_8px_rgba(225,29,72,0.4)]" /> 
-                  Active Hotspot Details
+                  {t('hotspotDetailsTitle')}
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1 font-medium">Temperature</p>
+                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1 font-medium">{t('tempLabel')}</p>
                     <p className="text-2xl font-bold text-orange-400">{selectedHotspot.temp}°C</p>
                   </div>
                   <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1 font-medium">Fire Radiative Power</p>
+                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1 font-medium">{t('frpLabel')}</p>
                     <p className="text-2xl font-bold text-red-600">{selectedHotspot.frp} MW</p>
                   </div>
                 </div>
@@ -268,38 +424,53 @@ export default function App() {
                   onClick={() => setIsSimulating(!isSimulating)}
                 >
                   {isSimulating ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} className="ml-1" />}
-                  {isSimulating ? 'Simulating Cellular Automata...' : 'Predict Spread (AI)'}
+                  {isSimulating ? t('simulatingSpreadBtn') : t('predictSpreadBtn')}
                 </button>
               </div>
+
+              {isSimulating && (
+                <div className="bg-orange-50/50 border border-orange-200/60 p-5 rounded-2xl text-slate-700 animate-in slide-in-from-top-4 duration-300">
+                  <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <Info size={16} className="text-orange-600" />
+                    {t('spreadForecastActive')}
+                  </h3>
+                  <p className="text-xs text-slate-600 leading-relaxed mb-2">
+                    {t('spreadDesc1')}
+                  </p>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {t('spreadDesc2')}
+                  </p>
+                </div>
+              )}
             </div>
           ) : selectedDistrict ? (
             <div className="space-y-6 animate-in slide-in-from-left-4 fade-in duration-300">
               <h2 className="text-2xl font-bold border-b border-slate-200 pb-3 flex items-center gap-2">
                 <MapIcon className="text-slate-600" size={24}/>
-                {selectedDistrict} Region
+                {selectedDistrict} {lang === 'en' ? 'Region' : lang === 'si' ? 'කලාපය' : 'பிராந்தியம்'}
               </h2>
               
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-slate-100/40 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/50 flex flex-col items-center justify-center text-center hover:bg-slate-100/60 transition-colors shadow-sm">
                   <Thermometer className="text-orange-400 mb-2 drop-shadow-[0_0_5px_rgba(251,146,60,0.6)]" size={26} />
                   <span className="text-lg font-bold">32°C</span>
-                  <span className="text-xs text-slate-500 font-medium">Avg Temp</span>
+                  <span className="text-xs text-slate-500 font-medium">{t('avgTemp')}</span>
                 </div>
                 <div className="bg-slate-100/40 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/50 flex flex-col items-center justify-center text-center hover:bg-slate-100/60 transition-colors shadow-sm">
                   <Wind className="text-sky-400 mb-2 drop-shadow-[0_0_5px_rgba(56,189,248,0.6)]" size={26} />
                   <span className="text-lg font-bold">15 km/h</span>
-                  <span className="text-xs text-slate-500 font-medium">Wind Spd</span>
+                  <span className="text-xs text-slate-500 font-medium">{t('windSpd')}</span>
                 </div>
                 <div className="bg-slate-100/40 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/50 flex flex-col items-center justify-center text-center hover:bg-slate-100/60 transition-colors shadow-sm">
                   <CloudRain className="text-emerald-400 mb-2 drop-shadow-[0_0_5px_rgba(52,211,153,0.6)]" size={26} />
                   <span className="text-lg font-bold">45%</span>
-                  <span className="text-xs text-slate-500 font-medium">Humidity</span>
+                  <span className="text-xs text-slate-500 font-medium">{t('humidity')}</span>
                 </div>
               </div>
 
               <div className="bg-white/80 p-5 rounded-2xl border border-slate-200/80 shadow-md">
                 <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
-                  <Activity size={16} className="text-indigo-400" /> SHAP Risk Explainability
+                  <Activity size={16} className="text-indigo-400" /> {t('shapTitle')}
                 </h3>
                 <div className="h-52">
                   <ResponsiveContainer width="100%" height="100%">
@@ -319,7 +490,7 @@ export default function App() {
 
               <div className="bg-white/80 p-5 rounded-2xl border border-slate-200/80 shadow-md">
                 <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
-                  <CloudRain size={16} className="text-sky-400" /> 24h Micro-climate Trend
+                  <CloudRain size={16} className="text-sky-400" /> {t('microclimateTrend')}
                 </h3>
                 <div className="h-52">
                   <ResponsiveContainer width="100%" height="100%">
@@ -328,8 +499,8 @@ export default function App() {
                       <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} dy={10} />
                       <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} />
                       <RechartsTooltip content={<CustomTooltip />} />
-                      <Line yAxisId="left" type="monotone" dataKey="temp" name="Temp (°C)" stroke="#f97316" strokeWidth={3} dot={{ r: 3, fill: '#f97316', strokeWidth: 0 }} activeDot={{ r: 6, strokeWidth: 0 }} />
-                      <Line yAxisId="left" type="monotone" dataKey="humidity" name="Humidity (%)" stroke="#38bdf8" strokeWidth={3} dot={{ r: 3, fill: '#38bdf8', strokeWidth: 0 }} activeDot={{ r: 6, strokeWidth: 0 }} />
+                      <Line yAxisId="left" type="monotone" dataKey="temp" name={t('tempTrendLabel')} stroke="#f97316" strokeWidth={3} dot={{ r: 3, fill: '#f97316', strokeWidth: 0 }} activeDot={{ r: 6, strokeWidth: 0 }} />
+                      <Line yAxisId="left" type="monotone" dataKey="humidity" name={t('humidityTrendLabel')} stroke="#38bdf8" strokeWidth={3} dot={{ r: 3, fill: '#38bdf8', strokeWidth: 0 }} activeDot={{ r: 6, strokeWidth: 0 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -342,21 +513,21 @@ export default function App() {
               <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-                    <ShieldAlert size={16} className="text-amber-600" /> System Threat Level
+                    <ShieldAlert size={16} className="text-amber-600" /> {t('threatLevel')}
                   </h3>
                   <span className="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full text-xs font-semibold border border-amber-200">ELEVATED</span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-600">Active Wildfires</span>
+                    <span className="text-slate-600">{t('activeWildfires')}</span>
                     <span className="font-bold text-rose-500 text-lg">3</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-600">Districts at Risk</span>
+                    <span className="text-slate-600">{t('districtsAtRisk')}</span>
                     <span className="font-bold text-orange-400 text-lg">5</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-600">Sensors Online</span>
+                    <span className="text-slate-600">{t('sensorsOnline')}</span>
                     <span className="font-bold text-emerald-400 text-lg">1,248</span>
                   </div>
                 </div>
@@ -364,7 +535,7 @@ export default function App() {
 
               <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
                 <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2 uppercase tracking-wide">
-                  <Cpu size={16} className="text-slate-700" /> Recent AI Detections
+                  <Cpu size={16} className="text-slate-700" /> {t('recentDetections')}
                 </h3>
                 <div className="flex flex-col">
                   {[
@@ -392,9 +563,30 @@ export default function App() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    System Nominal <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                    {t('systemNominal')} <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
                   </h4>
-                  <p className="text-xs text-slate-500 mt-0.5">All ingestion pipelines and inference engines are operational.</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{t('nominalDesc')}</p>
+                </div>
+              </div>
+
+              {/* How it Works Guide */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+                <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2 uppercase tracking-wide">
+                  <Info size={16} className="text-emerald-600" /> {t('guideTitle')}
+                </h3>
+                <div className="space-y-3 text-xs text-slate-600 leading-relaxed">
+                  <div>
+                    <strong className="text-slate-800">📡 {t('guideTitle') === "System Guide" ? "IoT Ground Sensors" : "IoT සංවේදක"}:</strong> {t('guideIot')}
+                  </div>
+                  <div>
+                    <strong className="text-slate-800">🔥 {t('guideTitle') === "System Guide" ? "Predict Spread (AI)" : "පැතිරීම පුරෝකථනය"}:</strong> {t('guideSim')}
+                  </div>
+                  <div>
+                    <strong className="text-slate-800">⚙️ {t('guideTitle') === "System Guide" ? "Explainable AI (XAI)" : "විශ්ලේෂණ (XAI)"}:</strong> {t('guideXai')}
+                  </div>
+                  <div>
+                    <strong className="text-slate-800">📷 {t('guideTitle') === "System Guide" ? "YOLOv8 Verification" : "YOLOv8 පරීක්ෂාව"}:</strong> {t('guideYolo')}
+                  </div>
                 </div>
               </div>
             </div>
@@ -413,14 +605,27 @@ export default function App() {
                   className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isLiveMode ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'}`}
                   onClick={() => setIsLiveMode(true)}
                 >
-                  LIVE DATA
+                  {t('liveData')}
                 </button>
                 <button 
                   className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${!isLiveMode ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'}`}
                   onClick={() => setIsLiveMode(false)}
                 >
-                  HISTORICAL SIM
+                  {t('historicalSim')}
                 </button>
+              </div>
+              
+              {/* Language Selector */}
+              <div className="bg-white/95 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200/80 flex items-center shadow-md">
+                {['en', 'si', 'ta'].map((l) => (
+                  <button
+                    key={l}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold uppercase transition-all duration-300 ${lang === l ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'}`}
+                    onClick={() => setLang(l)}
+                  >
+                    {l === 'en' ? 'EN' : l === 'si' ? 'සිං' : 'தமிழ்'}
+                  </button>
+                ))}
               </div>
           </div>
 
@@ -429,7 +634,7 @@ export default function App() {
               className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-2xl shadow-md font-semibold flex items-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-emerald-700/50"
               onClick={() => setShowReportModal(true)}
             >
-              <Upload size={18} /> REPORT FIRE (YOLOv8)
+              <Upload size={18} /> {t('reportFire')}
             </button>
           </div>
         </div>
@@ -472,12 +677,12 @@ export default function App() {
               >
                 <Popup className="custom-popup">
                   <div className="custom-popup-header">
-                    ⚠️ HIGH RISK HOTSPOT
+                    {t('highRiskHotspotPopup')}
                   </div>
                   <div className="custom-popup-body">
-                    <div className="mb-2"><span className="text-slate-600">Detected:</span> <span className="text-white font-medium">{h.time}</span></div>
-                    <div className="mb-2"><span className="text-slate-600">Temp:</span> <span className="text-orange-400 font-bold">{h.temp}°C</span></div>
-                    <div><span className="text-slate-600">Est. FRP:</span> <span className="text-red-600 font-bold">{h.frp} MW</span></div>
+                    <div className="mb-2"><span className="text-slate-600">{t('detectedPopup')}:</span> <span className="text-slate-800 font-medium">{h.time}</span></div>
+                    <div className="mb-2"><span className="text-slate-600">{t('tempPopup')}:</span> <span className="text-orange-600 font-bold">{h.temp}°C</span></div>
+                    <div><span className="text-slate-600">{t('estFrpPopup')}:</span> <span className="text-red-600 font-bold">{h.frp} MW</span></div>
                   </div>
                 </Popup>
               </Marker>
@@ -498,12 +703,12 @@ export default function App() {
               >
                 <Popup className="custom-popup">
                   <div className="custom-popup-header" style={{ background: s.status === 'safe' ? '#059669' : s.status === 'warning' ? '#d97706' : '#dc2626' }}>
-                    📡 IoT SENSOR #{s.id}
+                    {t('iotSensorPopup')} #{s.id}
                   </div>
                   <div className="custom-popup-body">
-                    <div className="mb-1"><span className="text-slate-600">Status:</span> <span className="text-white font-bold uppercase">{s.status}</span></div>
-                    <div className="mb-1"><span className="text-slate-600">Ground Temp:</span> <span className="text-white font-medium">{s.temp}°C</span></div>
-                    <div><span className="text-slate-600">Smoke (AQI):</span> <span className="text-white font-medium">{s.smoke}</span></div>
+                    <div className="mb-1"><span className="text-slate-600">{t('statusPopup')}:</span> <span className="text-slate-800 font-bold uppercase">{s.status}</span></div>
+                    <div className="mb-1"><span className="text-slate-600">{t('groundTempPopup')}:</span> <span className="text-slate-800 font-medium">{s.temp}°C</span></div>
+                    <div><span className="text-slate-600">{t('smokePopup')}:</span> <span className="text-slate-800 font-medium">{s.smoke}</span></div>
                   </div>
                 </Popup>
               </CircleMarker>
@@ -516,7 +721,7 @@ export default function App() {
         {/* Trilingual Alert Ticker - Bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-10 bg-slate-900 text-white z-[1000] border-t border-slate-800 flex items-center overflow-hidden shadow-sm">
            <div className="px-4 h-full bg-slate-950 flex items-center justify-center font-bold text-white z-10 border-r border-slate-800 uppercase tracking-widest text-xs shrink-0 gap-2">
-             <AlertTriangle size={16} className="animate-pulse text-amber-500" /> LIVE ALERTS
+             <AlertTriangle size={16} className="animate-pulse text-amber-500" /> {t('liveAlertsLabel')}
            </div>
            <div className="flex-1 overflow-hidden relative h-full flex items-center">
              <div className="ticker-content text-sm font-medium text-slate-300">
@@ -536,7 +741,7 @@ export default function App() {
                 <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
                   <Upload className="text-blue-400" size={20} />
                 </div>
-                Analyze Image (YOLOv8)
+                {t('analyzeImageTitle')}
               </h2>
               <button onClick={() => {setShowReportModal(false); setUploadedImage(null);}} className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:text-white hover:bg-slate-700 transition-colors">✕</button>
             </div>
@@ -550,8 +755,8 @@ export default function App() {
                 <div className="w-20 h-20 rounded-full bg-slate-100 mx-auto flex items-center justify-center mb-6">
                   <Upload size={32} className="text-slate-600" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-800 mb-2">Drag & drop a satellite or drone image</h3>
-                <p className="text-slate-500 text-sm">Supports high-res PNG, JPG, TIFF for inference</p>
+                <h3 className="text-lg font-bold text-slate-800 mb-2">{t('dragDropTitle')}</h3>
+                <p className="text-slate-500 text-sm">{t('dragDropDesc')}</p>
               </div>
             ) : (
               <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
@@ -564,7 +769,7 @@ export default function App() {
                          <div className="absolute inset-0 border-4 border-blue-500/30 rounded-full"></div>
                          <div className="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                       </div>
-                      <p className="text-blue-400 font-bold tracking-widest text-sm animate-pulse">RUNNING TENSORRT OPTIMIZED INFERENCE...</p>
+                      <p className="text-blue-400 font-bold tracking-widest text-sm animate-pulse">{t('runningInference')}</p>
                     </div>
                   ) : (
                     // Fake bounding box result
@@ -580,16 +785,16 @@ export default function App() {
                       <Activity className="text-emerald-400" size={20} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-emerald-400 text-sm mb-1">Detection Pipeline Complete</h4>
-                      <p className="text-sm text-slate-700">Isolated 1 thermal anomaly. Coordinates automatically logged and synced with decentralized alert mesh.</p>
+                      <h4 className="font-bold text-emerald-400 text-sm mb-1">{t('detectionPipelineComplete')}</h4>
+                      <p className="text-sm text-slate-700">{t('anomalyIsolated')}</p>
                     </div>
                   </div>
                 )}
                 
                 <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
-                  <button onClick={() => setUploadedImage(null)} className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-white hover:bg-slate-100 transition-colors">Discard</button>
+                  <button onClick={() => setUploadedImage(null)} className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-white hover:bg-slate-100 transition-colors">{t('discardBtn')}</button>
                   <button disabled={isDetecting} className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:opacity-50 text-white rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-blue-900/50">
-                    CONFIRM & BROADCAST
+                    {t('confirmBroadcastBtn')}
                   </button>
                 </div>
               </div>

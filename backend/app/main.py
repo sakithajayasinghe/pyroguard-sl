@@ -97,18 +97,25 @@ def get_hotspots(mode: str = Query("live")):
                 ]
         return []
     
-    # Mocking live data from FIRMS with matching keys
+    # Mocking live data from FIRMS at stable coordinates
     import random
+    fixed_coords = [
+        {"id": 1, "lat": 8.3541, "lng": 80.5023},
+        {"id": 2, "lat": 6.8625, "lng": 81.0431},
+        {"id": 3, "lat": 7.4284, "lng": 80.7812},
+        {"id": 4, "lat": 6.8732, "lng": 81.0654},
+        {"id": 5, "lat": 6.1245, "lng": 81.1234}
+    ]
     return [
         {
-            "id": i,
-            "lat": 7.0 + random.random() * 2,
-            "lng": 80.0 + random.random() * 1.5,
-            "temp": round(random.uniform(35, 55), 1),
-            "frp": round(random.uniform(50, 250), 1),
-            "time": f"{random.randint(1, 59)} mins ago"
+            "id": c["id"],
+            "lat": c["lat"],
+            "lng": c["lng"],
+            "temp": round(random.uniform(36.0, 54.0), 1),
+            "frp": round(random.uniform(60.0, 220.0), 1),
+            "time": f"{random.randint(1, 15)} mins ago"
         }
-        for i in range(1, 6)
+        for c in fixed_coords
     ]
 
 @app.get("/api/v1/risk-map")
