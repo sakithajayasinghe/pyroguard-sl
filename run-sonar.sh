@@ -32,4 +32,4 @@ echo "=== Running SonarQube Scanner ==="
 docker run --rm \
   --network host \
   -v "$(pwd):/usr/src" \
-  internal-repo.hsenidmobile.com:8443/docker-hub/sonarsource/sonar-scanner-cli:latest
+  sonarsource/sonar-scanner-cli:latest

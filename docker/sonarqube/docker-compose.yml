@@ -1,6 +1,6 @@
 services:
   sonarqube:
-    image: internal-repo.hsenidmobile.com:8443/library/sonarqube:community
+    image: sonarqube:community
     container_name: sonarqube
     depends_on:
       sonarqube-db:
@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
 
   sonarqube-db:
-    image: internal-repo.hsenidmobile.com:8443/library/postgres:17
+    image: postgres:17
     container_name: sonarqube-db
     environment:
       POSTGRES_USER: sonarqube
