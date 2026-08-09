@@ -106,14 +106,21 @@ export default function App() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [districtsData, setDistrictsData] = useState(null);
 
-  // Simulated fetch of district geojson
+  // Fetch real district GeoJSON boundaries from our backend API
   useEffect(() => {
-    // Ideally this would fetch from '/api/v1/districts.geojson'
-    // For now we use an empty FeatureCollection so it doesn't crash if the file is missing
-    setDistrictsData({
-      type: "FeatureCollection",
-      features: []
-    });
+    fetch('/api/v1/districts.geojson')
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to load map boundaries");
+        return res.json();
+      })
+      .then(data => setDistrictsData(data))
+      .catch(err => {
+        console.error("GeoJSON error:", err);
+        setDistrictsData({
+          type: "FeatureCollection",
+          features: []
+        });
+      });
   }, []);
 
   const onDrop = useCallback((acceptedFiles) => {

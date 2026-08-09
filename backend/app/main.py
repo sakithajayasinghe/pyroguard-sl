@@ -97,6 +97,14 @@ def get_hotspots(mode: str = Query("live")):
 def risk_map():
     return get_all_districts_risk()
 
+@app.get("/api/v1/districts.geojson")
+def get_districts_geojson():
+    file_path = os.path.join(os.path.dirname(__file__), "data", "sri_lanka_districts.geojson")
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            return json.load(f)
+    raise HTTPException(status_code=404, detail="GeoJSON not found")
+
 @app.get("/api/v1/risk/{district}")
 def district_risk(district: str):
     risk_info = calculate_district_risk(district)
