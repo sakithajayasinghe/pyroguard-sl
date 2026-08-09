@@ -56,12 +56,11 @@ body {
 /* Leaflet dark theme overrides */
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background: rgba(255, 255, 255, 0.95) !important; /* slate-900 */
-  backdrop-filter: blur(8px);
-  color: #0f172a !important; /* slate-100 */
-  border: 1px solid rgba(226, 232, 240, 0.8) !important; /* slate-700 */
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-  border-radius: 0.75rem !important;
+  border-radius: 12px !important;
 }
 
 .leaflet-popup-content-wrapper {
@@ -74,16 +73,17 @@ body {
 }
 
 .custom-popup-header {
-  background: linear-gradient(to right, #d97757, #c96245); /* soft terracotta */
-  padding: 8px 12px;
+  background: #ffffff;
+  padding: 12px 12px 4px 12px;
   font-weight: 700;
   font-size: 14px;
-  color: white;
+  color: #0f172a;
 }
 .custom-popup-body {
-  padding: 12px;
+  padding: 4px 12px 12px 12px;
   font-size: 13px;
   color: #475569;
+  background: #ffffff;
 }
 
 /* Ticker Animation */

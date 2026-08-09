@@ -171,15 +171,15 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#FAF9F6] text-slate-800 overflow-hidden font-sans selection:bg-emerald-500/30">
+    <div className="flex h-screen w-full bg-slate-50 text-slate-800 overflow-hidden font-sans selection:bg-emerald-500/30">
       
       {/* Sidebar Panel - Always visible, displays default dashboard when nothing is selected */}
-      <div className="w-[420px] shrink-0 backdrop-blur-xl bg-white/90 border-r border-stone-200/60 flex flex-col z-[1001] shadow-lg text-slate-800 transition-all duration-300">
+      <div className="w-[420px] shrink-0 bg-white border-r border-slate-200/80 flex flex-col z-[1001] shadow-sm text-slate-800 transition-all duration-300">
         
         <div className="p-6 flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-black bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent flex items-center gap-3 drop-shadow-md">
-              <Flame size={28} className="text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
+            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
+              <Flame size={28} className="text-orange-500" />
               PyroGuard SL
             </h1>
             {(selectedDistrict || selectedHotspot) && (
@@ -257,17 +257,9 @@ export default function App() {
                       <RechartsTooltip cursor={{fill: 'rgba(51, 65, 85, 0.4)'}} content={<CustomTooltip />} />
                       <Bar dataKey="impact" radius={[0, 6, 6, 0]} barSize={24}>
                         {XAI_DATA.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={`url(#colorImpact${index})`} />
+                          <Cell key={`cell-${index}`} fill="#3ecf8e" />
                         ))}
                       </Bar>
-                      <defs>
-                        {XAI_DATA.map((entry, index) => (
-                          <linearGradient key={`colorImpact${index}`} id={`colorImpact${index}`} x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#fcd34d" stopOpacity={0.8}/>
-                            <stop offset="100%" stopColor="#10b981" stopOpacity={1}/>
-                          </linearGradient>
-                        ))}
-                      </defs>
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -295,12 +287,12 @@ export default function App() {
           ) : (
             /* Default Dashboard View */
             <div className="space-y-6 animate-in fade-in duration-500">
-              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/50 shadow-lg text-amber-800">
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-amber-900 uppercase tracking-wide flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
                     <ShieldAlert size={16} className="text-amber-600" /> System Threat Level
                   </h3>
-                  <span className="px-2.5 py-1 text-xs font-bold bg-amber-200/50 text-amber-700 rounded-full border border-amber-300">ELEVATED</span>
+                  <span className="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full text-xs font-semibold border border-amber-200">ELEVATED</span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
@@ -318,37 +310,39 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-md">
-                <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
-                  <Cpu size={16} className="text-blue-400" /> Recent AI Detections
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+                <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2 uppercase tracking-wide">
+                  <Cpu size={16} className="text-slate-700" /> Recent AI Detections
                 </h3>
-                <div className="space-y-3">
+                <div className="flex flex-col">
                   {[
                     { time: '2 mins ago', loc: 'Badulla Region', conf: '94%', type: 'Satellite' },
                     { time: '15 mins ago', loc: 'Kandy Region', conf: '88%', type: 'Drone' },
                     { time: '1 hr ago', loc: 'Monaragala', conf: '91%', type: 'Sensor' }
                   ].map((alert, idx) => (
-                    <div key={idx} className="flex flex-col p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer">
+                    <div key={idx} className="flex flex-col py-3 border-t border-slate-100 first:border-0 hover:bg-slate-50 transition-colors cursor-pointer">
                       <div className="flex justify-between items-center mb-1">
                         <span className="font-semibold text-sm text-slate-800">{alert.loc}</span>
                         <span className="text-xs text-slate-500">{alert.time}</span>
                       </div>
                       <div className="flex justify-between items-center text-xs text-slate-500">
                         <span>Source: {alert.type}</span>
-                        <span className="text-blue-400 font-medium">Conf: {alert.conf}</span>
+                        <span className="font-medium text-[#3ecf8e]">Conf: {alert.conf}</span>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 shadow-md flex items-center gap-4 text-emerald-700">
-                <div className="w-10 h-10 rounded-full bg-emerald-200/50 flex items-center justify-center shrink-0 border border-emerald-300">
-                  <Activity size={20} className="text-emerald-600" />
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0 border border-slate-200">
+                  <Activity size={20} className="text-slate-700" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-emerald-900">System Nominal</h4>
-                  <p className="text-xs text-emerald-700/80 mt-0.5">All ingestion pipelines and inference engines are operational.</p>
+                  <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    System Nominal <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                  </h4>
+                  <p className="text-xs text-slate-500 mt-0.5">All ingestion pipelines and inference engines are operational.</p>
                 </div>
               </div>
             </div>
@@ -362,15 +356,15 @@ export default function App() {
         {/* Top Navbar / Floating Overlays */}
         <div className="absolute top-6 left-6 right-6 flex justify-between items-start z-[1000] pointer-events-none">
           <div className="pointer-events-auto flex items-center gap-3">
-             <div className="bg-white/85 backdrop-blur-xl p-1.5 rounded-2xl border border-slate-200/80 flex items-center shadow-2xl">
+             <div className="bg-white/95 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200/80 flex items-center shadow-md">
                 <button 
-                  className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${isLiveMode ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-900/40' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-100/50'}`}
+                  className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isLiveMode ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'}`}
                   onClick={() => setIsLiveMode(true)}
                 >
                   LIVE DATA
                 </button>
                 <button 
-                  className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${!isLiveMode ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/40' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-100/50'}`}
+                  className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${!isLiveMode ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'}`}
                   onClick={() => setIsLiveMode(false)}
                 >
                   HISTORICAL SIM
@@ -380,7 +374,7 @@ export default function App() {
 
           <div className="pointer-events-auto">
             <button 
-              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-6 py-3 rounded-2xl shadow-xl shadow-emerald-900/30 font-bold flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] border border-emerald-500/50"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-2xl shadow-md font-semibold flex items-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-emerald-700/50"
               onClick={() => setShowReportModal(true)}
             >
               <Upload size={18} /> REPORT FIRE (YOLOv8)
@@ -395,7 +389,7 @@ export default function App() {
             zoom={7} 
             zoomControl={false}
             className="w-full h-full"
-            style={{ background: '#FAF9F6' }}
+            style={{ background: '#f8fafc' }}
           >
             <TileLayer
               attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
@@ -468,12 +462,12 @@ export default function App() {
         </div>
 
         {/* Trilingual Alert Ticker - Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-10 bg-slate-700/90 backdrop-blur-md z-[1000] border-t border-slate-600 flex items-center overflow-hidden shadow-lg">
-           <div className="px-4 h-full bg-slate-800 flex items-center justify-center font-bold text-white z-10 shadow-xl border-r border-slate-600 uppercase tracking-widest text-xs shrink-0 gap-2">
-             <AlertTriangle size={16} className="animate-pulse" /> LIVE ALERTS
+        <div className="absolute bottom-0 left-0 right-0 h-10 bg-slate-900 text-white z-[1000] border-t border-slate-800 flex items-center overflow-hidden shadow-sm">
+           <div className="px-4 h-full bg-slate-950 flex items-center justify-center font-bold text-white z-10 border-r border-slate-800 uppercase tracking-widest text-xs shrink-0 gap-2">
+             <AlertTriangle size={16} className="animate-pulse text-amber-500" /> LIVE ALERTS
            </div>
            <div className="flex-1 overflow-hidden relative h-full flex items-center">
-             <div className="ticker-content text-sm font-semibold text-white/90 drop-shadow-md">
+             <div className="ticker-content text-sm font-medium text-slate-300">
                [EN] WILD FIRE WARNING IN EFFECT FOR BADULLA DISTRICT • [SI] බදුල්ල දිස්ත්‍රික්කයට ලැව්ගිනි අනතුරු ඇඟවීමක් • [TA] பதுளை மாவட்டத்திற்கு காட்டுத்தீ எச்சரிக்கை • [EN] EVACUATION ORDERS IN EFFECT FOR SECTOR 4
              </div>
            </div>
