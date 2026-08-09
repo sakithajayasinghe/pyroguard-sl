@@ -9,14 +9,14 @@ docker compose -f docker/sonarqube/docker-compose.yml up -d
 
 echo "=== Waiting for SonarQube to be ready ==="
 IS_UP=false
-for i in {1..60}; do
+for i in {1..120}; do
   STATUS=$(curl -s http://localhost:9000/api/system/status | grep -o '"status":"[^"]*"' | cut -d'"' -f4 || true)
   if [ "$STATUS" = "UP" ]; then
     echo "SonarQube server is UP and ready!"
     IS_UP=true
     break
   fi
-  echo "Still waiting for SonarQube status UP (current: '${STATUS:-DOWN}')... ($i/60)"
+  echo "Still waiting for SonarQube status UP (current: '${STATUS:-DOWN}')... ($i/120)"
   sleep 5
 done
 
