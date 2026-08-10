@@ -94,17 +94,37 @@ def calculate_district_risk(district_name):
         "explainability": normalized_shap
     }
 
+# Sri Lanka fire risk profiles by region
+HIGH_RISK_DISTRICTS = {"Badulla", "Moneragala", "Hambantota", "Anuradhapura", "Polonnaruwa", "Ampara", "Trincomalee"}
+MEDIUM_RISK_DISTRICTS = {"Matale", "Kandy", "Mannar", "Vavuniya", "Puttalam", "Kurunegala", "Ratnapura", "Kilinochchi"}
+
 def get_all_districts_risk():
     results = []
-    for district in DISTRICTS.keys():
-        lat, lon = DISTRICTS[district]
-        # Faster mock calculation for all to avoid 25 API calls holding up the endpoint
-        temp = random.uniform(25, 38)
-        wind = random.uniform(0, 25)
-        humidity = random.uniform(30, 85)
-        precip = random.uniform(0, 5)
-        score = (temp * 0.4) + (wind * 0.3) - (humidity * 0.2) - (precip * 0.1)
-        base_risk = round(max(0, min(100, score * 2.5)), 2)
+    # Seeded pseudo-random so scores are consistent between calls
+    import time
+    time_seed = int(time.time() / 300) # update every 5 minutes
+    
+    for district, (lat, lon) in DISTRICTS.items():
+        rng = random.Random(hash(district) + time_seed)
+        
+        if district in HIGH_RISK_DISTRICTS:
+            temp = rng.uniform(32, 39)
+            wind = rng.uniform(15, 30)
+            humidity = rng.uniform(35, 55)
+            precip = 0
+        elif district in MEDIUM_RISK_DISTRICTS:
+            temp = rng.uniform(28, 34)
+            wind = rng.uniform(10, 20)
+            humidity = rng.uniform(50, 70)
+            precip = rng.uniform(0, 1.5)
+        else:
+            temp = rng.uniform(22, 29)
+            wind = rng.uniform(5, 15)
+            humidity = rng.uniform(70, 90)
+            precip = rng.uniform(1, 8)
+            
+        score = (temp * 0.45) + (wind * 0.35) - (humidity * 0.25) - (precip * 0.5)
+        base_risk = round(max(15, min(96, (score - 2) * 2.8)), 1)
         
         results.append({
             "district": district,
