@@ -39,8 +39,9 @@ fi
 
 echo "=== Running SonarQube Scanner ==="
 docker run --rm \
+  --user "$(id -u):$(id -g)" \
   --network host \
   -v "$(pwd):/usr/src" \
   sonarsource/sonar-scanner-cli:5.0.1
 
-sudo -n rm -rf .scannerwork 2>/dev/null || rm -rf .scannerwork 2>/dev/null || true
+rm -rf .scannerwork 2>/dev/null || true
