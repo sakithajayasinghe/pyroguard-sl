@@ -68,10 +68,9 @@ def init_db():
 def startup_event():
     init_db()
 
-# Serve static files if exist
-dist_path = os.path.join(os.path.dirname(__file__), "..", "..", "dist")
-if os.path.exists(dist_path):
-    app.mount("/static", StaticFiles(directory=dist_path), name="static")
+frontend_dist_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
+if os.path.exists(frontend_dist_path):
+    app.mount("/app", StaticFiles(directory=frontend_dist_path, html=True), name="frontend")
 
 @app.get("/api/v1/health")
 def health_check():

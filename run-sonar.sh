@@ -42,3 +42,5 @@ docker run --rm \
   --network host \
   -v "$(pwd):/usr/src" \
   sonarsource/sonar-scanner-cli:5.0.1
+
+sudo -n rm -rf .scannerwork 2>/dev/null || rm -rf .scannerwork 2>/dev/null || true
