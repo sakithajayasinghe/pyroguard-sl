@@ -9,17 +9,19 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
+      - name: Clean stale permissions
+        run: |
+          sudo -n rm -rf .scannerwork 2>/dev/null || rm -rf .scannerwork 2>/dev/null || true
+
       - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          clean: false
+        uses: actions/checkout@v4
 
       - name: Run SonarQube Quality Scan
         run: |
           ./run-sonar.sh
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
