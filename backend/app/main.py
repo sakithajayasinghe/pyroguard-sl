@@ -273,7 +273,12 @@ async def detect_smoke(file: UploadFile = File(...)):
                     "class": "highland_mist_or_smoke"
                 })
         
-        classification = "ACTIVE_FIRE" if any(d["class"] in ["fire", "fire_and_smoke"] for d in detections) else "MOUNTAIN_MIST"
+        # Any real fire OR smoke detection means danger -- a visible smoke
+        # plume (the most common real-world signal, often far more visible
+        # than the flame front itself) must never be classified as safe.
+        # Only the fallback heuristic's explicit "no fire signature found"
+        # label ("highland_mist_or_smoke") represents the safe case.
+        classification = "ACTIVE_FIRE" if any(d["class"] in ["fire", "smoke", "fire_and_smoke"] for d in detections) else "MOUNTAIN_MIST"
         confidence = max([d["confidence"] for d in detections]) if detections else 0.85
 
         # Log this real detection event so the "Recent AI Detections" feed
