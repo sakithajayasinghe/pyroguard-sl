@@ -62,6 +62,14 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE
     )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS detections (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        source TEXT,
+        location TEXT,
+        classification TEXT,
+        metric TEXT,
+        timestamp TEXT
+    )''')
     conn.commit()
     conn.close()
 
@@ -265,12 +273,26 @@ async def detect_smoke(file: UploadFile = File(...)):
                     "class": "highland_mist_or_smoke"
                 })
         
+        classification = "ACTIVE_FIRE" if any(d["class"] in ["fire", "fire_and_smoke"] for d in detections) else "MOUNTAIN_MIST"
+        confidence = max([d["confidence"] for d in detections]) if detections else 0.85
+
+        # Log this real detection event so the "Recent AI Detections" feed
+        # reflects actual analyses instead of hardcoded examples.
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO detections (source, location, classification, metric, timestamp) VALUES (?, ?, ?, ?, ?)",
+            ("YOLOv8 Vision AI", "User Upload", classification, f"Conf: {round(confidence * 100, 1)}%", datetime.datetime.now().isoformat())
+        )
+        conn.commit()
+        conn.close()
+
         return {
             "status": "success",
             "image": f"data:image/jpeg;base64,{img_str}",
             "detections": detections,
-            "classification": "ACTIVE_FIRE" if any(d["class"] in ["fire", "fire_and_smoke"] for d in detections) else "MOUNTAIN_MIST",
-            "confidence": max([d["confidence"] for d in detections]) if detections else 0.85
+            "classification": classification,
+            "confidence": confidence
         }
     except Exception as e:
         return JSONResponse(status_code=400, content={"error": str(e), "message": "Failed to analyze image"})
@@ -362,6 +384,58 @@ def delete_sensor_data(sensor_id: str):
     deleted = cursor.rowcount
     conn.close()
     return {"status": "success", "deleted_rows": deleted}
+
+def _time_ago(dt):
+    delta_min = int((datetime.datetime.now() - dt).total_seconds() / 60)
+    if delta_min < 1:
+        return "just now"
+    if delta_min < 60:
+        return f"{delta_min} mins ago"
+    if delta_min < 1440:
+        return f"{delta_min // 60}h ago"
+    return f"{delta_min // 1440}d ago"
+
+@app.get("/api/v1/detections/recent")
+def get_recent_detections(limit: int = 5):
+    """Real recent AI activity: actual /detect-smoke analyses (logged as
+    they happen) filled out with real FIRMS satellite detections. No
+    hardcoded example rows -- empty until something real has happened."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT source, location, classification, metric, timestamp FROM detections ORDER BY timestamp DESC LIMIT ?",
+        (limit,)
+    )
+    rows = cursor.fetchall()
+    conn.close()
+
+    status_labels = {"ACTIVE_FIRE": "Active Fire", "MOUNTAIN_MIST": "Safe (No Fire Detected)"}
+    items = []
+    for source, location, classification, metric, ts in rows:
+        items.append({
+            "time": _time_ago(datetime.datetime.fromisoformat(ts)),
+            "loc": location,
+            "metric": metric,
+            "type": source,
+            "status": status_labels.get(classification, classification)
+        })
+
+    firms_status = {"likely_wildfire": "Active Fire", "likely_agricultural_burn": "Chena/Agricultural Burn"}
+    for h in (get_live_hotspots() or []):
+        if len(items) >= limit:
+            break
+        label = firms_status.get(h.get("classification"))
+        if not label:
+            continue
+        items.append({
+            "time": h["time"],
+            "loc": f"{h['lat']:.3f}, {h['lng']:.3f}",
+            "metric": f"FRP: {h['frp']} MW",
+            "type": "FIRMS VIIRS",
+            "status": label
+        })
+
+    return items[:limit]
 
 class BroadcastRequest(BaseModel):
     district: str

@@ -216,6 +216,7 @@ export default function App() {
   const [districtsRiskList, setDistrictsRiskList] = useState({});
   const [hotspots, setHotspots] = useState([]);
   const [sensors, setSensors] = useState([]);
+  const [recentDetections, setRecentDetections] = useState([]);
   const [lang, setLang] = useState('en');
 
   const t = (key) => TRANSLATIONS[lang][key] || key;
@@ -261,6 +262,20 @@ export default function App() {
     }
     return () => clearInterval(interval);
   }, [isLiveMode]);
+
+  // Recent AI Detections feed: real logged /detect-smoke analyses + real
+  // FIRMS detections, not hardcoded examples
+  useEffect(() => {
+    const fetchRecentDetections = () => {
+      fetch('/api/v1/detections/recent')
+        .then(res => res.json())
+        .then(data => setRecentDetections(data))
+        .catch(err => console.error("Recent detections fetch error:", err));
+    };
+    fetchRecentDetections();
+    const interval = setInterval(fetchRecentDetections, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Ground sensor readings: LIVE shows only real backend data (no physical
   // ESP32 units are deployed yet, so this is currently an honest empty
@@ -662,11 +677,10 @@ export default function App() {
                   <Cpu size={16} className="text-orange-400" /> {t('recentDetections')}
                 </h3>
                 <div className="flex flex-col gap-2.5">
-                  {[
-                    { time: '2 mins ago', loc: 'Badulla / Ella Gap', conf: '98.9%', type: 'YOLOv8 Vision AI', status: 'Active Fire' },
-                    { time: '14 mins ago', loc: 'Knuckles Range', conf: '96.4%', type: 'Cloud Bypass AI', status: 'Safe (Mountain Fog)' },
-                    { time: '45 mins ago', loc: 'Hambantota Buffer', conf: '89.2%', type: 'FIRMS VIIRS', status: 'Chena Clearance' }
-                  ].map((item, idx) => (
+                  {recentDetections.length === 0 && (
+                    <div className="text-xs text-slate-500 text-center py-4">No AI detections yet — upload a photo or check back as satellite passes come in.</div>
+                  )}
+                  {recentDetections.map((item, idx) => (
                     <div key={idx} className="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex justify-between items-center hover:border-slate-700 transition-colors">
                       <div>
                         <div className="font-bold text-sm text-white flex items-center gap-2">
@@ -680,7 +694,7 @@ export default function App() {
                         <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${item.status.includes('Fire') ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'}`}>
                           {item.status}
                         </span>
-                        <span className="text-[11px] font-bold text-amber-400 block mt-1">Conf: {item.conf}</span>
+                        <span className="text-[11px] font-bold text-amber-400 block mt-1">{item.metric}</span>
                       </div>
                     </div>
                   ))}
