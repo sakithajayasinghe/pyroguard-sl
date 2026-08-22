@@ -1,5 +1,7 @@
 import math
 import random
+import time
+import concurrent.futures
 import requests
 
 DISTRICTS = {
@@ -53,24 +55,43 @@ def get_weather(lat, lon):
         "precip": random.uniform(0, 5)
     }
 
-def calculate_district_risk(district_name):
-    if district_name not in DISTRICTS:
-        return {"error": "Unknown district"}
-    
-    lat, lon = DISTRICTS[district_name]
-    weather = get_weather(lat, lon)
-    
+def _fwi_risk_score(weather):
+    """Shared FWI-like heuristic: same formula for both the single-district
+    drill-down and the district heatmap, so the two views can't disagree.
+
+    Normalized so each factor contributes a capped share of 0-100 against
+    realistic Sri Lankan weather ranges. (An earlier linear-sum-then-clamp
+    version was tuned against fabricated placeholder data and could never
+    score above ~44 against any real weather reading -- "High" was
+    mathematically unreachable regardless of actual fire-weather severity.)
+    """
     temp = weather["temp"]
     humidity = weather["humidity"]
     wind = weather["wind_speed"]
     precip = weather["precip"]
-    
-    # FWI-like simple heuristic
-    risk_score = (temp * 0.4) + (wind * 0.3) - (humidity * 0.2) - (precip * 0.1)
-    
-    # Base risk mapped 0 to 100
-    base_risk = max(0, min(100, risk_score * 2.5))
-    
+
+    temp_pts = max(0, min(35, (temp - 20) / 20 * 35))            # 20-40C
+    wind_pts = max(0, min(25, wind / 30 * 25))                    # 0-30 km/h
+    humidity_pts = max(0, min(25, (100 - humidity) / 70 * 25))    # 30-100% (drier = more points)
+    precip_pts = max(0, min(15, 15 - precip * 3))                 # 0-5mm (less rain = more points)
+
+    return max(0, min(100, temp_pts + wind_pts + humidity_pts + precip_pts))
+
+
+def calculate_district_risk(district_name):
+    if district_name not in DISTRICTS:
+        return {"error": "Unknown district"}
+
+    lat, lon = DISTRICTS[district_name]
+    weather = get_weather(lat, lon)
+
+    temp = weather["temp"]
+    humidity = weather["humidity"]
+    wind = weather["wind_speed"]
+    precip = weather["precip"]
+
+    base_risk = _fwi_risk_score(weather)
+
     # Explainable AI SHAP style breakdown
     shap_breakdown = {
         "Temperature": round((temp / 40) * 30, 2),
@@ -94,43 +115,33 @@ def calculate_district_risk(district_name):
         "explainability": normalized_shap
     }
 
-# Sri Lanka fire risk profiles by region
-HIGH_RISK_DISTRICTS = {"Badulla", "Moneragala", "Hambantota", "Anuradhapura", "Polonnaruwa", "Ampara", "Trincomalee"}
-MEDIUM_RISK_DISTRICTS = {"Matale", "Kandy", "Mannar", "Vavuniya", "Puttalam", "Kurunegala", "Ratnapura", "Kilinochchi"}
+_district_risk_cache = {"data": None, "timestamp": 0}
+DISTRICT_RISK_CACHE_SECONDS = 600  # 10 min: keeps page loads fast, stays well within Open-Meteo's rate limits
+
+
+def _fetch_one_district_risk(district):
+    lat, lon = DISTRICTS[district]
+    weather = get_weather(lat, lon)
+    base_risk = round(_fwi_risk_score(weather), 1)
+    return {
+        "district": district,
+        "lat": lat,
+        "lon": lon,
+        "risk_score": base_risk,
+        "risk_level": "High" if base_risk > 70 else "Medium" if base_risk > 40 else "Low"
+    }
+
 
 def get_all_districts_risk():
-    results = []
-    # Seeded pseudo-random so scores are consistent between calls
-    import time
-    time_seed = int(time.time() / 300) # update every 5 minutes
-    
-    for district, (lat, lon) in DISTRICTS.items():
-        rng = random.Random(hash(district) + time_seed)
-        
-        if district in HIGH_RISK_DISTRICTS:
-            temp = rng.uniform(32, 39)
-            wind = rng.uniform(15, 30)
-            humidity = rng.uniform(35, 55)
-            precip = 0
-        elif district in MEDIUM_RISK_DISTRICTS:
-            temp = rng.uniform(28, 34)
-            wind = rng.uniform(10, 20)
-            humidity = rng.uniform(50, 70)
-            precip = rng.uniform(0, 1.5)
-        else:
-            temp = rng.uniform(22, 29)
-            wind = rng.uniform(5, 15)
-            humidity = rng.uniform(70, 90)
-            precip = rng.uniform(1, 8)
-            
-        score = (temp * 0.45) + (wind * 0.35) - (humidity * 0.25) - (precip * 0.5)
-        base_risk = round(max(15, min(96, (score - 2) * 2.8)), 1)
-        
-        results.append({
-            "district": district,
-            "lat": lat,
-            "lon": lon,
-            "risk_score": base_risk,
-            "risk_level": "High" if base_risk > 70 else "Medium" if base_risk > 40 else "Low"
-        })
+    now = time.time()
+    if _district_risk_cache["data"] is not None and (now - _district_risk_cache["timestamp"]) < DISTRICT_RISK_CACHE_SECONDS:
+        return _district_risk_cache["data"]
+
+    # Fetch all 25 districts' real weather concurrently -- sequential calls
+    # would take 15-25s and make the dashboard feel broken on load.
+    with concurrent.futures.ThreadPoolExecutor(max_workers=25) as executor:
+        results = list(executor.map(_fetch_one_district_risk, DISTRICTS.keys()))
+
+    _district_risk_cache["data"] = results
+    _district_risk_cache["timestamp"] = now
     return results
