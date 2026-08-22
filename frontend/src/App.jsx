@@ -215,7 +215,7 @@ export default function App() {
   const [districtsData, setDistrictsData] = useState(null);
   const [districtsRiskList, setDistrictsRiskList] = useState({});
   const [hotspots, setHotspots] = useState([]);
-  const [sensors, setSensors] = useState(MOCK_SENSORS);
+  const [sensors, setSensors] = useState([]);
   const [lang, setLang] = useState('en');
 
   const t = (key) => TRANSLATIONS[lang][key] || key;
@@ -262,16 +262,31 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isLiveMode]);
 
-  // Simulate ground sensor readings
+  // Ground sensor readings: LIVE shows only real backend data (no physical
+  // ESP32 units are deployed yet, so this is currently an honest empty
+  // list -- never the illustrative mock network). DEMO shows the mock
+  // network with simulated jitter, clearly scoped to non-live mode only.
   useEffect(() => {
-    if (!isLiveMode) return;
+    if (isLiveMode) {
+      const fetchSensors = () => {
+        fetch('/api/v1/sensor-data/latest')
+          .then(res => res.json())
+          .then(data => setSensors(data))
+          .catch(err => console.error("Sensor data fetch error:", err));
+      };
+      fetchSensors();
+      const interval = setInterval(fetchSensors, 10000);
+      return () => clearInterval(interval);
+    }
+
+    setSensors(MOCK_SENSORS);
     const interval = setInterval(() => {
       setSensors(prev => prev.map(s => {
         const tempDelta = (Math.random() - 0.5) * 1.5;
         const smokeDelta = Math.floor((Math.random() - 0.5) * 3);
         const newTemp = Math.max(20, Math.min(65, s.temp + tempDelta));
         const newSmoke = Math.max(0, Math.min(100, s.smoke + smokeDelta));
-        
+
         let newStatus = 'safe';
         if (newSmoke > 70 || newTemp > 50) newStatus = 'danger';
         else if (newSmoke > 35 || newTemp > 35) newStatus = 'warning';

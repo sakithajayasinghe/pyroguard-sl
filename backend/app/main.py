@@ -330,6 +330,29 @@ def post_sensor_data(data: SensorData):
     conn.close()
     return {"status": "success"}
 
+@app.get("/api/v1/sensor-data/latest")
+def get_latest_sensor_data():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT sensor_id, temperature, humidity, gas_level, MAX(timestamp)
+        FROM sensor_data
+        GROUP BY sensor_id
+        ORDER BY MAX(timestamp) DESC
+    ''')
+    rows = cursor.fetchall()
+    conn.close()
+    return [
+        {
+            "sensor_id": r[0],
+            "temp": r[1],
+            "humidity": r[2],
+            "gas_level": r[3],
+            "timestamp": r[4]
+        }
+        for r in rows
+    ]
+
 class BroadcastRequest(BaseModel):
     district: str
     lat: float
