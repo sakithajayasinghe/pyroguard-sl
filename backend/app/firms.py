@@ -9,7 +9,7 @@ from functools import lru_cache
 # Sri Lanka bounding box (west, south, east, north)
 FIRMS_BBOX = "79.5,5.8,82.0,9.9"
 FIRMS_SOURCE = "VIIRS_SNPP_NRT"
-FIRMS_DAY_RANGE = 2  # NRT day-1 alone is frequently empty between satellite passes
+FIRMS_DAY_RANGE = 1  # strictly last 24h of NRT detections
 
 CACHE_SECONDS = 300  # stay well under FIRMS's 10-min transaction window
 
