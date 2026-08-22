@@ -40,13 +40,13 @@ def classify_hotspot(frp, confidence):
     return "likely_agricultural_burn", False
 
 
-def _fetch_firms_csv():
+def _fetch_firms_csv(day_range):
     map_key = os.getenv("FIRMS_MAP_KEY")
     if not map_key:
         return None
     url = (
         f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/"
-        f"{FIRMS_SOURCE}/{FIRMS_BBOX}/{_get_day_range()}"
+        f"{FIRMS_SOURCE}/{FIRMS_BBOX}/{day_range}"
     )
     try:
         res = requests.get(url, timeout=10)
@@ -60,9 +60,9 @@ def _fetch_firms_csv():
         return None
 
 
-@lru_cache(maxsize=4)
-def _cached_fetch(cache_bucket):
-    return _fetch_firms_csv()
+@lru_cache(maxsize=20)
+def _cached_fetch(cache_bucket, day_range):
+    return _fetch_firms_csv(day_range)
 
 
 def _relative_time(detected_at_utc, now_utc):
@@ -76,14 +76,18 @@ def _relative_time(detected_at_utc, now_utc):
     return f"{delta_min // 1440}d ago"
 
 
-def get_live_hotspots(limit=40):
+def get_live_hotspots(limit=40, day_range=None):
     """Real NASA FIRMS VIIRS active-fire detections for Sri Lanka.
+
+    day_range overrides the FIRMS_DAY_RANGE env default for this call (e.g.
+    from a UI time-window picker), clamped to FIRMS's valid 1-5 range.
 
     Returns None if FIRMS_MAP_KEY isn't set or the API call fails, so the
     caller can fall back to simulated data instead of showing an empty map.
     """
+    resolved_range = max(1, min(5, int(day_range))) if day_range else _get_day_range()
     cache_bucket = int(time.time() / CACHE_SECONDS)
-    raw = _cached_fetch(cache_bucket)
+    raw = _cached_fetch(cache_bucket, resolved_range)
     if raw is None:
         return None
 

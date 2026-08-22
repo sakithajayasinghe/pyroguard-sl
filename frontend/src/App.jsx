@@ -217,6 +217,10 @@ export default function App() {
   const [hotspots, setHotspots] = useState([]);
   const [sensors, setSensors] = useState([]);
   const [recentDetections, setRecentDetections] = useState([]);
+  const [firmsDays, setFirmsDays] = useState(1);
+  const [showDaySelector, setShowDaySelector] = useState(false);
+  const longPressTimer = useRef(null);
+  const longPressTriggered = useRef(false);
   const [lang, setLang] = useState('en');
 
   const t = (key) => TRANSLATIONS[lang][key] || key;
@@ -245,11 +249,14 @@ export default function App() {
       .catch(err => console.error("Sample images error:", err));
   }, []);
 
-  // Fetch hotspots (Live vs Demo)
+  // Fetch hotspots (Live vs Demo). firmsDays only affects live mode -- how
+  // far back FIRMS looks (1-5 days), user-adjustable via long-press on the
+  // LIVE SATELLITE button instead of an env var + redeploy.
   useEffect(() => {
     const fetchHotspots = () => {
       const modeParam = isLiveMode ? 'live' : 'demo';
-      fetch(`/api/v1/hotspots?mode=${modeParam}`)
+      const daysParam = isLiveMode ? `&days=${firmsDays}` : '';
+      fetch(`/api/v1/hotspots?mode=${modeParam}${daysParam}`)
         .then(res => res.json())
         .then(data => setHotspots(data))
         .catch(err => console.error("Hotspots fetch error:", err));
@@ -261,7 +268,7 @@ export default function App() {
       interval = setInterval(fetchHotspots, 10000);
     }
     return () => clearInterval(interval);
-  }, [isLiveMode]);
+  }, [isLiveMode, firmsDays]);
 
   // Recent AI Detections feed: real logged /detect-smoke analyses + real
   // FIRMS detections, not hardcoded examples
@@ -734,14 +741,59 @@ export default function App() {
           <div className="pointer-events-auto flex items-center gap-3">
             {/* Live vs Demo Toggle */}
             <div className="bg-slate-900/95 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800 flex items-center shadow-2xl">
-              <button 
-                className={`px-4 py-2 rounded-xl text-xs font-black transition-all duration-300 flex items-center gap-2 ${isLiveMode ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
-                onClick={() => setIsLiveMode(true)}
-              >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                {t('liveData')}
-              </button>
-              <button 
+              <div className="relative">
+                <button
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all duration-300 flex items-center gap-2 ${isLiveMode ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+                  onClick={() => {
+                    if (longPressTriggered.current) { longPressTriggered.current = false; return; }
+                    setIsLiveMode(true);
+                  }}
+                  onMouseDown={() => {
+                    longPressTriggered.current = false;
+                    longPressTimer.current = setTimeout(() => {
+                      longPressTriggered.current = true;
+                      setShowDaySelector(true);
+                    }, 550);
+                  }}
+                  onMouseUp={() => clearTimeout(longPressTimer.current)}
+                  onMouseLeave={() => clearTimeout(longPressTimer.current)}
+                  onTouchStart={() => {
+                    longPressTriggered.current = false;
+                    longPressTimer.current = setTimeout(() => {
+                      longPressTriggered.current = true;
+                      setShowDaySelector(true);
+                    }, 550);
+                  }}
+                  onTouchEnd={() => clearTimeout(longPressTimer.current)}
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  {t('liveData')}
+                  {isLiveMode && <span className="text-[9px] font-semibold text-orange-200/80 normal-case">{firmsDays === 1 ? '24h' : `${firmsDays}d`}</span>}
+                </button>
+
+                {showDaySelector && (
+                  <>
+                    <div className="fixed inset-0 z-[1000]" onClick={() => setShowDaySelector(false)}></div>
+                    <div className="absolute top-full left-0 mt-2 bg-slate-900/95 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl p-1.5 flex flex-col gap-1 z-[1001] min-w-[170px]">
+                      {[
+                        { label: 'Last 24 Hours', days: 1 },
+                        { label: 'Last 2 Days', days: 2 },
+                        { label: 'Last 3 Days', days: 3 },
+                        { label: 'Last 5 Days', days: 5 }
+                      ].map(opt => (
+                        <button
+                          key={opt.days}
+                          className={`text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors ${firmsDays === opt.days ? 'bg-orange-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}
+                          onClick={() => { setFirmsDays(opt.days); setIsLiveMode(true); setShowDaySelector(false); }}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+              <button
                 className={`px-4 py-2 rounded-xl text-xs font-black transition-all duration-300 ${!isLiveMode ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
                 onClick={() => setIsLiveMode(false)}
               >

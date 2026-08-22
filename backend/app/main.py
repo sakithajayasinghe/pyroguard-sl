@@ -87,7 +87,7 @@ def health_check():
     return {"status": "ok", "timestamp": datetime.datetime.now().isoformat()}
 
 @app.get("/api/v1/hotspots")
-def get_hotspots(mode: str = Query("live")):
+def get_hotspots(mode: str = Query("live"), days: int = Query(None)):
     if mode == "demo":
         file_path = os.path.join(os.path.dirname(__file__), "data", "historical_fires.json")
         if os.path.exists(file_path):
@@ -111,7 +111,7 @@ def get_hotspots(mode: str = Query("live")):
 
     # Real NASA FIRMS VIIRS active-fire detections (falls back to simulated
     # coordinates below if FIRMS_MAP_KEY isn't set or the API is unreachable)
-    live = get_live_hotspots()
+    live = get_live_hotspots(day_range=days)
     if live is not None:
         return live
 
