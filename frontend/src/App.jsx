@@ -30,6 +30,27 @@ const MOCK_SENSORS = [
 
 const SriLankaCenter = [7.8731, 80.7718];
 
+// Recent AI Detections entries sourced from FIRMS store their location as
+// "lat, lng" (see main.py's get_recent_detections); YOLOv8 upload entries
+// store "User Upload" instead, which has no map coordinate to focus on.
+const parseLocCoords = (loc) => {
+  const m = /^(-?\d+\.?\d*),\s*(-?\d+\.?\d*)$/.exec((loc || '').trim());
+  if (!m) return null;
+  return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+};
+
+// Pans/zooms the map to a target lat/lng, e.g. from clicking a Recent AI
+// Detections card. Must live inside <MapContainer> to access the map instance.
+const MapFocusController = ({ target }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (target) {
+      map.flyTo([target.lat, target.lng], 12, { duration: 1.2 });
+    }
+  }, [target, map]);
+  return null;
+};
+
 // Map Spread Layer Renderer
 const FireSpreadOverlay = ({ spreadGeoJson }) => {
   if (!spreadGeoJson || !spreadGeoJson.features) return null;
@@ -217,6 +238,7 @@ export default function App() {
   const [hotspots, setHotspots] = useState([]);
   const [sensors, setSensors] = useState([]);
   const [recentDetections, setRecentDetections] = useState([]);
+  const [mapFocusTarget, setMapFocusTarget] = useState(null);
   const [firmsDays, setFirmsDays] = useState(1);
   const [showDaySelector, setShowDaySelector] = useState(false);
   const longPressTimer = useRef(null);
@@ -687,8 +709,18 @@ export default function App() {
                   {recentDetections.length === 0 && (
                     <div className="text-xs text-slate-500 text-center py-4">No AI detections yet — upload a photo or check back as satellite passes come in.</div>
                   )}
-                  {recentDetections.map((item, idx) => (
-                    <div key={idx} className="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex justify-between items-center hover:border-slate-700 transition-colors">
+                  {recentDetections.map((item, idx) => {
+                    const coords = parseLocCoords(item.loc);
+                    return (
+                    <div
+                      key={idx}
+                      className={`p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex justify-between items-center transition-colors ${coords ? 'hover:border-orange-500/60 cursor-pointer' : 'hover:border-slate-700'}`}
+                      onClick={coords ? () => {
+                        setSelectedDistrict(null);
+                        setMapFocusTarget({ ...coords });
+                      } : undefined}
+                      title={coords ? 'Click to focus on map' : undefined}
+                    >
                       <div>
                         <div className="font-bold text-sm text-white flex items-center gap-2">
                           {item.loc}
@@ -704,7 +736,8 @@ export default function App() {
                         <span className="text-[11px] font-bold text-amber-400 block mt-1">{item.metric}</span>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -847,7 +880,9 @@ export default function App() {
               attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             />
-            
+
+            <MapFocusController target={mapFocusTarget} />
+
             {/* GeoJSON District Risk Polygons */}
             {districtsData && (
               <GeoJSON 
