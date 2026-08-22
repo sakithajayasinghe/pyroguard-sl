@@ -13,3 +13,4 @@ services:
     environment:
       - DATABASE_URL=sqlite:////workspace/shared_data/pyroguard.db
       - FIRMS_MAP_KEY=${FIRMS_MAP_KEY:-}
+      - FIRMS_DAY_RANGE=${FIRMS_DAY_RANGE:-1}

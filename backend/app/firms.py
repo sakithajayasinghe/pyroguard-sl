@@ -9,9 +9,18 @@ from functools import lru_cache
 # Sri Lanka bounding box (west, south, east, north)
 FIRMS_BBOX = "79.5,5.8,82.0,9.9"
 FIRMS_SOURCE = "VIIRS_SNPP_NRT"
-FIRMS_DAY_RANGE = 1  # strictly last 24h of NRT detections
+DEFAULT_DAY_RANGE = 1  # strictly last 24h of NRT detections
 
 CACHE_SECONDS = 300  # stay well under FIRMS's 10-min transaction window
+
+
+def _get_day_range():
+    """Configurable via FIRMS_DAY_RANGE env var; FIRMS only accepts 1-5."""
+    try:
+        value = int(os.getenv("FIRMS_DAY_RANGE", str(DEFAULT_DAY_RANGE)))
+    except ValueError:
+        value = DEFAULT_DAY_RANGE
+    return max(1, min(5, value))
 
 # FRP (Fire Radiative Power, MW) is a proxy for thermal intensity. Small
 # agricultural/chena burns in Sri Lanka typically show low, brief FRP;
@@ -37,7 +46,7 @@ def _fetch_firms_csv():
         return None
     url = (
         f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/"
-        f"{FIRMS_SOURCE}/{FIRMS_BBOX}/{FIRMS_DAY_RANGE}"
+        f"{FIRMS_SOURCE}/{FIRMS_BBOX}/{_get_day_range()}"
     )
     try:
         res = requests.get(url, timeout=10)
