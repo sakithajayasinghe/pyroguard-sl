@@ -38,6 +38,10 @@ jobs:
           sudo cp -r ./frontend/dist /var/www/pyroguard/
           sudo chown -R www-data:www-data /var/www/pyroguard
 
+      - name: Write Sonar Basic-Auth credentials
+        run: |
+          echo "${{ secrets.SONAR_HTPASSWD }}" | sudo tee /etc/nginx/.htpasswd_sonar > /dev/null
+
       - name: Configure Nginx
         run: |
           sudo cp ./nginx/pyroguard.conf /etc/nginx/sites-available/default

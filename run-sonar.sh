@@ -5,13 +5,14 @@ echo "=== System configurations ==="
 sudo -n sysctl -w vm.max_map_count=262144 2>/dev/null || sudo sysctl -w vm.max_map_count=262144 2>/dev/null || true
 
 echo "=== Ensuring SonarQube is running clean ==="
-docker compose -f docker/sonarqube/docker-compose.yml down -v 2>/dev/null || true
+# No -v: keep the named volumes so scan history survives across deploys.
+docker compose -f docker/sonarqube/docker-compose.yml down 2>/dev/null || true
 docker compose -f docker/sonarqube/docker-compose.yml up -d
 
 echo "=== Waiting for SonarQube to be ready ==="
 IS_UP=false
 for i in {1..120}; do
-  STATUS=$(curl -s http://localhost:9000/api/system/status | grep -o '"status":"[^"]*"' | cut -d'"' -f4 || true)
+  STATUS=$(curl -s http://localhost:9000/sonar/api/system/status | grep -o '"status":"[^"]*"' | cut -d'"' -f4 || true)
   if [ "$STATUS" = "UP" ]; then
     echo "SonarQube server is UP and ready!"
     IS_UP=true
@@ -28,12 +29,12 @@ if [ "$IS_UP" != "true" ]; then
 fi
 
 echo "=== Checking admin authentication & resetting default password ==="
-VALID=$(curl -s -u admin:admin123 http://localhost:9000/api/authentication/validate | grep -o '"valid":true' || true)
+VALID=$(curl -s -u admin:admin123 http://localhost:9000/sonar/api/authentication/validate | grep -o '"valid":true' || true)
 if [ -n "$VALID" ]; then
   echo "Authentication with admin123 successful."
 else
   echo "Resetting default password admin -> admin123..."
-  curl -s -u admin:admin -X POST "http://localhost:9000/api/users/change_password?login=admin&previousPassword=admin&password=admin123" || true
+  curl -s -u admin:admin -X POST "http://localhost:9000/sonar/api/users/change_password?login=admin&previousPassword=admin&password=admin123" || true
   echo ""
 fi
 
