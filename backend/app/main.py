@@ -81,7 +81,7 @@ def health_check():
 @app.get("/api/v1/hotspots")
 def get_hotspots(mode: str = Query("live")):
     if mode == "demo":
-        file_path = "/data/AI-Challenge/backend/app/data/historical_fires.json"
+        file_path = os.path.join(os.path.dirname(__file__), "data", "historical_fires.json")
         if os.path.exists(file_path):
             with open(file_path, "r") as f:
                 data = json.load(f)
@@ -92,7 +92,10 @@ def get_hotspots(mode: str = Query("live")):
                         "lng": h["longitude"],
                         "temp": round(h["brightness"] - 273.15, 1) if h["brightness"] > 250 else h["brightness"],
                         "frp": h["frp"],
-                        "time": f"{h['acq_date']} {h['acq_time']}"
+                        "time": f"{h['acq_date']} {h['acq_time']}",
+                        "source": "historical_demo",
+                        "classification": "historical_confirmed_fire",
+                        "is_likely_wildfire": True
                     }
                     for h in data
                 ]
@@ -121,7 +124,9 @@ def get_hotspots(mode: str = Query("live")):
             "temp": round(random.uniform(36.0, 54.0), 1),
             "frp": round(random.uniform(60.0, 220.0), 1),
             "time": f"{random.randint(1, 15)} mins ago",
-            "source": "simulated"
+            "source": "simulated",
+            "classification": "likely_wildfire",
+            "is_likely_wildfire": True
         }
         for c in fixed_coords
     ]

@@ -13,6 +13,23 @@ FIRMS_DAY_RANGE = 2  # NRT day-1 alone is frequently empty between satellite pas
 
 CACHE_SECONDS = 300  # stay well under FIRMS's 10-min transaction window
 
+# FRP (Fire Radiative Power, MW) is a proxy for thermal intensity. Small
+# agricultural/chena burns in Sri Lanka typically show low, brief FRP;
+# sustained higher FRP at nominal/high satellite confidence is a much
+# stronger signal of an actual uncontrolled vegetation fire. This is a
+# heuristic (not trained on labeled ground-truth incidents) but it stops
+# every raw satellite thermal pixel from being labeled "wildfire".
+WILDFIRE_FRP_THRESHOLD_MW = 15.0
+
+
+def classify_hotspot(frp, confidence):
+    """Returns (classification, is_likely_wildfire) for one detection."""
+    if confidence == "l":
+        return "low_confidence_noise", False
+    if frp >= WILDFIRE_FRP_THRESHOLD_MW:
+        return "likely_wildfire", True
+    return "likely_agricultural_burn", False
+
 
 def _fetch_firms_csv():
     map_key = os.getenv("FIRMS_MAP_KEY")
@@ -73,6 +90,8 @@ def get_live_hotspots(limit=40):
             detected_at = datetime.datetime.strptime(
                 f"{row['acq_date']} {acq_time}", "%Y-%m-%d %H%M"
             )
+            confidence = row.get("confidence")
+            classification, is_likely_wildfire = classify_hotspot(frp, confidence)
             hotspots.append({
                 "id": i + 1,
                 "lat": float(row["latitude"]),
@@ -80,9 +99,11 @@ def get_live_hotspots(limit=40):
                 "temp": temp_c,
                 "frp": frp,
                 "time": _relative_time(detected_at, now),
-                "confidence": row.get("confidence"),
+                "confidence": confidence,
                 "satellite": row.get("satellite"),
                 "source": FIRMS_SOURCE,
+                "classification": classification,
+                "is_likely_wildfire": is_likely_wildfire,
             })
         except (KeyError, ValueError):
             continue

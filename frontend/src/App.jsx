@@ -627,15 +627,16 @@ export default function App() {
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
                     <span className="text-[10px] text-slate-400 block mb-1 uppercase font-semibold">{t('activeWildfires')}</span>
-                    <span className="font-black text-rose-500 text-2xl">{hotspots.length}</span>
+                    <span className="font-black text-rose-500 text-2xl">{hotspots.filter(h => h.is_likely_wildfire).length}</span>
+                    <span className="text-[9px] text-slate-500 block mt-0.5">{hotspots.length} satellite detections</span>
                   </div>
                   <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
                     <span className="text-[10px] text-slate-400 block mb-1 uppercase font-semibold">{t('districtsAtRisk')}</span>
-                    <span className="font-black text-orange-400 text-2xl">7</span>
+                    <span className="font-black text-orange-400 text-2xl">{Object.values(districtsRiskList).filter(d => d.risk_level === 'High').length}</span>
                   </div>
                   <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
                     <span className="text-[10px] text-slate-400 block mb-1 uppercase font-semibold">{t('sensorsOnline')}</span>
-                    <span className="font-black text-emerald-400 text-2xl">1,248</span>
+                    <span className="font-black text-emerald-400 text-2xl">{sensors.length}</span>
                   </div>
                 </div>
               </div>
