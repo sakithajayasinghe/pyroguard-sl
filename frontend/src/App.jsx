@@ -818,10 +818,11 @@ export default function App() {
               </Marker>
             ))}
 
-            {/* Ground IoT Sensor Markers */}
-            {sensors.map(s => (
+            {/* Ground IoT Sensor Markers -- skip real rows without a location
+                (the sensor_data table only stores telemetry, not lat/lng) */}
+            {sensors.filter(s => s.lat != null && s.lng != null).map(s => (
               <CircleMarker
-                key={s.id}
+                key={s.id || s.sensor_id}
                 center={[s.lat, s.lng]}
                 pathOptions={{
                   color: s.status === 'safe' ? '#10b981' : s.status === 'warning' ? '#f59e0b' : '#ef4444',

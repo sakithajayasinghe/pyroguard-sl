@@ -353,6 +353,16 @@ def get_latest_sensor_data():
         for r in rows
     ]
 
+@app.delete("/api/v1/sensor-data/{sensor_id}")
+def delete_sensor_data(sensor_id: str):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM sensor_data WHERE sensor_id = ?", (sensor_id,))
+    conn.commit()
+    deleted = cursor.rowcount
+    conn.close()
+    return {"status": "success", "deleted_rows": deleted}
+
 class BroadcastRequest(BaseModel):
     district: str
     lat: float
