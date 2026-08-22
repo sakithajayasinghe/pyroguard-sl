@@ -2,6 +2,7 @@ fastapi
 uvicorn
 ultralytics
 httpx
+requests
 pandas
 numpy
 pillow

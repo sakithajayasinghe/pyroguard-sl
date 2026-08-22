@@ -14,6 +14,7 @@ import numpy as np
 # Absolute imports as requested
 from app.risk import calculate_district_risk, get_all_districts_risk
 from app.simulation import simulate_spread
+from app.firms import get_live_hotspots
 
 app = FastAPI(title="PyroGuard SL Backend")
 
@@ -96,8 +97,14 @@ def get_hotspots(mode: str = Query("live")):
                     for h in data
                 ]
         return []
-    
-    # Mocking live data from FIRMS at stable coordinates
+
+    # Real NASA FIRMS VIIRS active-fire detections (falls back to simulated
+    # coordinates below if FIRMS_MAP_KEY isn't set or the API is unreachable)
+    live = get_live_hotspots()
+    if live is not None:
+        return live
+
+    # Fallback: simulated data at stable coordinates
     import random
     fixed_coords = [
         {"id": 1, "lat": 8.3541, "lng": 80.5023},
@@ -113,7 +120,8 @@ def get_hotspots(mode: str = Query("live")):
             "lng": c["lng"],
             "temp": round(random.uniform(36.0, 54.0), 1),
             "frp": round(random.uniform(60.0, 220.0), 1),
-            "time": f"{random.randint(1, 15)} mins ago"
+            "time": f"{random.randint(1, 15)} mins ago",
+            "source": "simulated"
         }
         for c in fixed_coords
     ]

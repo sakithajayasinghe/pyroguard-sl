@@ -44,6 +44,10 @@ jobs:
           sudo nginx -t
           sudo systemctl reload nginx
 
+      - name: Write runtime secrets
+        run: |
+          echo "FIRMS_MAP_KEY=${{ secrets.FIRMS_MAP_KEY }}" > .env
+
       - name: Deploy Backend with Docker Compose
         run: |
           docker compose down
