@@ -40,7 +40,7 @@ jobs:
 
       - name: Write Sonar Basic-Auth credentials
         run: |
-          echo "${{ secrets.SONAR_HTPASSWD }}" | sudo tee /etc/nginx/.htpasswd_sonar > /dev/null
+          echo '${{ secrets.SONAR_HTPASSWD }}' | sudo tee /etc/nginx/.htpasswd_sonar > /dev/null
 
       - name: Configure Nginx
         run: |
